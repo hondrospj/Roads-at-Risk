@@ -1853,14 +1853,41 @@
 
     installDualScale();
 
-    function projectionBaseYear(){
+    function archiveEndYear(){
       return Number(String(state.floodStats?.archive?.endDate || "").slice(0, 4)) || new Date().getFullYear();
+    }
+
+    function projectionBaseYear(){
+      return Math.max(new Date().getFullYear(), archiveEndYear());
     }
 
     function scenarioDeltaFt(year){
       const scenario = activeScenario();
       const x = Math.max(0, Number(year) - projectionBaseYear());
       return Math.max(0, scenario.quadratic * x * x + scenario.linear * x);
+    }
+
+    function datumTrendFtPerYear(){
+      const trend = Number(state.floodStats?.tideModel?.trendFtPerYear);
+      return Number.isFinite(trend) ? trend : 0;
+    }
+
+    function decimalYear(dateText){
+      const parts = dateParts(dateText);
+      const idx = doyIndex(dateText);
+      if(!parts || idx === null) return null;
+      return parts.year + idx / 365.2425;
+    }
+
+    function lowerBound(sortedValues, value){
+      let lo = 0;
+      let hi = sortedValues.length;
+      while(lo < hi){
+        const mid = Math.floor((lo + hi) / 2);
+        if(sortedValues[mid] >= value) hi = mid;
+        else lo = mid + 1;
+      }
+      return lo;
     }
 
     function setBasemap(id){
@@ -1901,15 +1928,7 @@
     }
 
     function countDailyExceedances(stageFt){
-      const peaks = state.floodStats?.dailyPeakNavd88Ft || [];
-      let lo = 0;
-      let hi = peaks.length;
-      while(lo < hi){
-        const mid = Math.floor((lo + hi) / 2);
-        if(peaks[mid] >= stageFt) hi = mid;
-        else lo = mid + 1;
-      }
-      return peaks.length - lo;
+      return empiricalExceedance(stageFt).exceedances;
     }
 
     function recurrenceText(stageFt){
@@ -1972,6 +1991,43 @@
         .filter(row => /^\d{4}-\d{2}-\d{2}$/.test(row.date) && Number.isFinite(row.peakFt));
     }
 
+    function presentRebasedArchive(){
+      const baseYear = projectionBaseYear();
+      const trend = datumTrendFtPerYear();
+      return dailyArchive()
+        .map(row => {
+          const eventYear = decimalYear(row.date);
+          const rebaseFt = eventYear === null ? 0 : (baseYear - eventYear) * trend;
+          return {
+            ...row,
+            presentPeakFt:row.peakFt + rebaseFt,
+            rebaseFt
+          };
+        })
+        .filter(row => Number.isFinite(row.presentPeakFt));
+    }
+
+    function presentPeakDistribution(){
+      return presentRebasedArchive()
+        .map(row => row.presentPeakFt)
+        .sort((a, b) => a - b);
+    }
+
+    function empiricalExceedance(stageFt, sortedValues=presentPeakDistribution()){
+      const n = sortedValues.length;
+      if(!n || !Number.isFinite(stageFt)){
+        return { count:n, exceedances:0, cdf:0, survival:0 };
+      }
+      const idx = lowerBound(sortedValues, stageFt);
+      const exceedances = n - idx;
+      return {
+        count:n,
+        exceedances,
+        cdf:idx / n,
+        survival:exceedances / n
+      };
+    }
+
     function archiveYearRange(records){
       const years = records
         .map(row => dateParts(row.date)?.year)
@@ -1997,21 +2053,25 @@
     }
 
     function projectionForThreshold(thresholdFt, year){
-      const records = dailyArchive();
-      const peaks = state.floodStats?.dailyPeakNavd88Ft || [];
-      if(!records.length || !peaks.length || !Number.isFinite(thresholdFt)) return null;
+      const presentPeaks = presentPeakDistribution();
+      if(!presentPeaks.length || !Number.isFinite(thresholdFt)) return null;
       const scenario = activeScenario();
       const deltaFt = scenarioDeltaFt(year);
       const effectiveThreshold = thresholdFt - deltaFt;
-      const probability = countDailyExceedances(effectiveThreshold) / peaks.length;
+      const distribution = empiricalExceedance(effectiveThreshold, presentPeaks);
+      const probability = distribution.survival;
       const range = binomialRange(365.2425, probability);
       return {
         year:Number(year),
+        baseYear:projectionBaseYear(),
         scenario:state.projectionScenario,
         scenarioLabel:scenario.label,
         scenarioShort:scenario.short,
         seaLevelRiseFt:deltaFt,
         effectiveThreshold,
+        sampleCount:distribution.count,
+        cdf:distribution.cdf,
+        exceedances:distribution.exceedances,
         probability,
         mean:range.mean,
         low:range.low,
@@ -2038,6 +2098,9 @@
       const records = dailyArchive();
       const years = archiveYearRange(records);
       if(!records.length || !years.length) return null;
+      const presentPeaks = presentPeakDistribution();
+      const presentDistribution = empiricalExceedance(threshold, presentPeaks);
+      const baseYear = projectionBaseYear();
 
       const annualMap = new Map(years.map(year => [year, 0]));
       const dailyByYear = new Map(years.map(year => [year, new Array(365).fill(0)]));
@@ -2080,7 +2143,7 @@
       const current = (cumulativeByYear.find(item => item.year === lastYear)?.cumulative || new Array(365).fill(0))
         .map((value, i) => i <= endIdx ? value : null);
 
-      const currentProjection = projectionForThreshold(threshold, lastYear);
+      const currentProjection = projectionForThreshold(threshold, baseYear);
       const projectionYear = 2100;
       const projection2100 = projectionForThreshold(threshold, projectionYear);
       const forecastMean = new Array(365).fill(null);
@@ -2094,10 +2157,9 @@
       }
 
       const annualRows = years.map(year => ({ year, count:annualMap.get(year) || 0 }));
-      const futureYears = Array.from({length:2100 - lastYear}, (_, i) => lastYear + i + 1);
+      const futureYears = Array.from({length:2100 - baseYear}, (_, i) => baseYear + i + 1);
       const future = futureYears.map(year => projectionForThreshold(threshold, year)).filter(Boolean);
-      const peaks = state.floodStats?.dailyPeakNavd88Ft || [];
-      const observedRecordFt = peaks.length ? Math.max(...peaks) : null;
+      const observedRecordFt = presentPeaks.length ? Math.max(...presentPeaks) : null;
       const modelCeilingFt = Number.isFinite(observedRecordFt) && projection2100
         ? observedRecordFt + projection2100.seaLevelRiseFt
         : null;
@@ -2112,6 +2174,7 @@
         years,
         firstYear,
         lastYear,
+        baseYear,
         statsYears,
         annualRows,
         cumulativeByYear,
@@ -2122,13 +2185,14 @@
         currentProjection,
         projectionYear,
         projection2100,
+        presentDistribution,
         observedRecordFt,
         modelCeilingFt,
         forecastMean,
         forecastLow,
         forecastHigh,
         future,
-        total:annualRows.reduce((sum, row) => sum + row.count, 0)
+        total:presentDistribution.exceedances
       };
       state.floodBucketCache.set(key, stats);
       return stats;
@@ -2650,8 +2714,8 @@
       setText("doyFloodMeta", `${bucketStats.projectionYear} ${bucketStats.scenarioShort}`);
       const scenarioText = bucketStats.scenarioLabel.toLowerCase();
       const note = bucketStats.projection2100 && bucketStats.projection2100.mean < .05 && Number.isFinite(bucketStats.modelCeilingFt)
-        ? `No ${bucketStats.scenarioLabel.toLowerCase()} 2100 flood days; modeled ceiling ${bucketStats.modelCeilingFt.toFixed(1)} ft.`
-        : `Archive shifted with ${scenarioText} sea-level rise; bucketed to 0.1 ft.`;
+        ? `Present-year CDF, ${bucketStats.total}/${bucketStats.presentDistribution.count} archive days; no ${scenarioText} 2100 flood days.`
+        : `Present-year CDF, ${bucketStats.total}/${bucketStats.presentDistribution.count} archive days; ${scenarioText} sea-level rise projected forward.`;
       setText("projectionNote", note);
       renderAnnualFloodChart(bucketStats);
       renderDoyFloodChart(bucketStats);
