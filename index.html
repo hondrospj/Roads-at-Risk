@@ -1287,18 +1287,162 @@
 
     .shell.paneExpanded .toolPane.isExpanded{
       display:flex;
+      padding:20px;
+      gap:14px;
+      border-radius:12px;
     }
 
     .shell.paneExpanded .crossSectionPane .chartWrap{
-      min-height:420px;
+      min-height:52vh;
+    }
+
+    .shell.paneExpanded .toolTitleRow{
+      margin-bottom:14px;
+    }
+
+    .shell.paneExpanded .toolTitle{
+      gap:12px;
+      font-size:clamp(24px, 2.4vw, 36px);
+      line-height:1.05;
+    }
+
+    .shell.paneExpanded .pill{
+      min-height:34px;
+      padding:7px 13px;
+      font-size:13px;
+    }
+
+    .shell.paneExpanded button{
+      min-height:44px;
+      padding:10px 14px;
+      font-size:14px;
+      border-radius:10px;
+    }
+
+    .shell.paneExpanded .expandBtn{
+      width:44px;
+      min-width:44px;
+      font-size:26px;
+      padding:0;
+    }
+
+    .shell.paneExpanded .compactStats{
+      gap:12px;
+    }
+
+    .shell.paneExpanded .compactStats .stat,
+    .shell.paneExpanded .floodSummary .miniStat{
+      min-height:82px;
+      padding:13px 15px;
+      border-radius:11px;
+    }
+
+    .shell.paneExpanded .stat .k,
+    .shell.paneExpanded .miniStat .k,
+    .shell.paneExpanded .metricRow .k{
+      font-size:13px;
+      line-height:1.25;
+    }
+
+    .shell.paneExpanded .stat .v,
+    .shell.paneExpanded .miniStat .v{
+      margin-top:8px;
+      font-size:clamp(24px, 2.1vw, 34px);
     }
 
     .shell.paneExpanded .crossSectionPane .pointStrip{
       display:grid;
+      grid-template-columns:minmax(0, .8fr) minmax(0, 1.2fr);
+      gap:14px;
+    }
+
+    .shell.paneExpanded .pointHero{
+      min-height:118px;
+      padding:16px;
+      border-radius:12px;
+    }
+
+    .shell.paneExpanded .pointHero .height{
+      margin-top:7px;
+      font-size:clamp(34px, 3vw, 48px);
+    }
+
+    .shell.paneExpanded .pointHero .tag{
+      min-height:36px;
+      padding:8px 12px;
+      font-size:13px;
+    }
+
+    .shell.paneExpanded .metricRows{
+      gap:10px;
+    }
+
+    .shell.paneExpanded .metricRow{
+      padding:12px 14px;
+      border-radius:11px;
+    }
+
+    .shell.paneExpanded .metricRow .v{
+      font-size:clamp(18px, 1.4vw, 24px);
+    }
+
+    .shell.paneExpanded .thresholdCompact{
+      gap:10px;
+      margin:12px 0 14px;
+    }
+
+    .shell.paneExpanded .thresholdInputRow{
+      grid-template-columns:minmax(0,1fr) 112px;
+      gap:10px;
+    }
+
+    .shell.paneExpanded input[type="number"],
+    .shell.paneExpanded .lineForm input{
+      min-height:44px;
+      padding:10px 13px;
+      font-size:16px;
+      border-radius:10px;
+    }
+
+    .shell.paneExpanded input[type="range"]{
+      min-height:32px;
+    }
+
+    .shell.paneExpanded .chartHeader{
+      min-height:42px;
+      margin-bottom:12px;
+    }
+
+    .shell.paneExpanded .chartTitle{
+      font-size:clamp(22px, 1.8vw, 30px);
+    }
+
+    .shell.paneExpanded .chartPills{
+      gap:8px;
     }
 
     .shell.paneExpanded .floodHistoryPane .tinyChartWrap{
-      min-height:190px;
+      min-height:260px;
+    }
+
+    .shell.paneExpanded .floodHistoryPane .annualChartWrap,
+    .shell.paneExpanded .floodHistoryPane .seasonChartWrap{
+      flex:1 1 0;
+    }
+
+    .shell.paneExpanded .scenarioRow{
+      gap:10px;
+      margin-bottom:14px;
+    }
+
+    .shell.paneExpanded .floodSummary{
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .shell.paneExpanded .tinyChartLabel{
+      margin:9px 0 6px;
+      font-size:15px;
     }
 
     .shell.paneExpanded .floodHistoryPane .seasonLabel{
@@ -1313,8 +1457,46 @@
       min-height:100%;
     }
 
+    .shell.paneExpanded .exportGrid{
+      gap:18px;
+    }
+
+    .shell.paneExpanded .exportColumn{
+      gap:12px;
+    }
+
+    .shell.paneExpanded .exportColumnTitle{
+      font-size:20px;
+    }
+
+    .shell.paneExpanded .lineForm{
+      grid-template-columns:minmax(0,1fr) 96px;
+      gap:10px;
+    }
+
+    .shell.paneExpanded .savedLineList{
+      gap:10px;
+    }
+
+    .shell.paneExpanded .savedLine{
+      padding:12px;
+      gap:10px;
+      border-radius:11px;
+    }
+
+    .shell.paneExpanded .savedLineName{
+      font-size:16px;
+    }
+
+    .shell.paneExpanded .exportStatus,
+    .shell.paneExpanded .emptySaved{
+      font-size:15px;
+      line-height:1.45;
+    }
+
     .shell.paneExpanded .exportPane .lineUtility{
       display:grid;
+      gap:10px;
     }
 
     @media (max-height: 760px) and (min-width: 981px){
@@ -1752,7 +1934,43 @@
     function activeScenario(){ return PROJECTION_SCENARIOS[state.projectionScenario] || PROJECTION_SCENARIOS.intermediate; }
     function setExportStatus(text){ setText("exportStatus", text); }
 
+    function isPaneExpanded(id){
+      return Boolean($("shell")?.classList.contains("paneExpanded") && $(id)?.classList.contains("isExpanded"));
+    }
+
+    function applyChartTypography(chart, expanded){
+      if(!chart?.options) return;
+      const tickSize = expanded ? 16 : 11;
+      const titleSize = expanded ? 18 : 12;
+      const legendSize = expanded ? 17 : 12;
+      const tooltipSize = expanded ? 15 : 12;
+      chart.options.plugins = chart.options.plugins || {};
+      chart.options.plugins.tooltip = {
+        ...(chart.options.plugins.tooltip || {}),
+        titleFont:{ size:tooltipSize, weight:"700" },
+        bodyFont:{ size:tooltipSize },
+        footerFont:{ size:tooltipSize }
+      };
+      if(chart.options.plugins.legend?.labels){
+        chart.options.plugins.legend.labels.font = { size:legendSize, weight:"700" };
+        chart.options.plugins.legend.labels.boxWidth = expanded ? 14 : 8;
+      }
+      for(const axis of Object.values(chart.options.scales || {})){
+        axis.ticks = {
+          ...(axis.ticks || {}),
+          font:{ size:tickSize, weight:expanded ? "700" : "500" }
+        };
+        if(axis.title){
+          axis.title.font = { size:titleSize, weight:"800" };
+        }
+      }
+      chart.update("none");
+    }
+
     function resizeCharts(){
+      applyChartTypography(state.chart, isPaneExpanded("crossSectionPane"));
+      applyChartTypography(state.annualFloodChart, isPaneExpanded("floodHistoryPane"));
+      applyChartTypography(state.doyFloodChart, isPaneExpanded("floodHistoryPane"));
       state.chart?.resize();
       state.annualFloodChart?.resize();
       state.doyFloodChart?.resize();
@@ -2436,6 +2654,7 @@
           }
         }
       });
+      resizeCharts();
     }
 
     function renderAnnualFloodChart(bucketStats){
@@ -2567,6 +2786,7 @@
       }else{
         state.annualFloodChart = new Chart(canvas, config);
       }
+      resizeCharts();
     }
 
     function renderDoyFloodChart(bucketStats){
@@ -2720,6 +2940,7 @@
       }else{
         state.doyFloodChart = new Chart(canvas, { type:"line", data, options });
       }
+      resizeCharts();
     }
 
     function renderPointFloodProduct(stageFt){
