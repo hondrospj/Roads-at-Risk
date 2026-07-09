@@ -21,19 +21,22 @@
 
   <style>
     :root{
-      --bg:#0b1220;
-      --panel:#172030;
-      --panel2:#101827;
-      --line:rgba(226,232,240,.15);
-      --text:#eaf2ff;
-      --muted:#a9b7cf;
-      --accent:#60a5fa;
-      --accent2:#22d3ee;
+      --bg:#070b12;
+      --panel:#101725;
+      --panel2:#0c1320;
+      --line:rgba(226,232,240,.13);
+      --text:#f2f7ff;
+      --muted:#97a8c4;
+      --accent:#4fb3ff;
+      --accent2:#20d8e8;
       --risk:#fb7185;
+      --minor:#f59e0b;
+      --moderate:#f43f5e;
+      --major:#8b5cf6;
       --warn:#fbbf24;
       --ok:#34d399;
       --ink:#07111f;
-      --shadow:0 16px 42px rgba(3,10,22,.38);
+      --shadow:0 18px 48px rgba(0,0,0,.42);
     }
 
     *{box-sizing:border-box}
@@ -68,10 +71,10 @@
       display:flex;
       align-items:center;
       gap:16px;
-      min-height:74px;
-      padding:12px 18px 12px 24px;
-      border-radius:28px;
-      background:rgba(15,23,42,.92);
+      min-height:64px;
+      padding:10px 14px 10px 20px;
+      border-radius:18px;
+      background:rgba(10,15,25,.90);
       box-shadow:var(--shadow);
       border:1px solid rgba(255,255,255,.12);
       backdrop-filter:blur(12px);
@@ -92,7 +95,7 @@
 
     h1{
       margin:0;
-      font-size:34px;
+      font-size:32px;
       line-height:1;
       white-space:nowrap;
       font-weight:950;
@@ -135,8 +138,8 @@
     .leftPanel{
       top:16px;
       left:16px;
-      width:352px;
-      max-height:calc(100vh - 188px);
+      width:326px;
+      max-height:calc(100vh - 182px);
       overflow:auto;
       padding:14px;
     }
@@ -144,8 +147,10 @@
     .rightPanel{
       top:16px;
       right:16px;
-      width:276px;
-      padding:14px;
+      width:336px;
+      max-height:calc(100vh - 198px);
+      overflow:auto;
+      padding:12px;
       display:grid;
       gap:10px;
     }
@@ -159,11 +164,11 @@
     }
 
     .panelBlock{
-      border-radius:14px;
+      border-radius:12px;
       border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.05);
-      padding:12px;
-      margin-bottom:10px;
+      background:rgba(255,255,255,.045);
+      padding:11px;
+      margin-bottom:9px;
     }
 
     .panelBlock:last-child{margin-bottom:0}
@@ -203,7 +208,7 @@
       border:1px solid rgba(147,197,253,.36);
       background:rgba(96,165,250,.14);
       color:#dbeafe;
-      border-radius:12px;
+      border-radius:10px;
       min-height:42px;
       padding:10px 12px;
       font-size:13px;
@@ -232,17 +237,52 @@
 
     label{
       display:block;
-      margin:10px 0 7px;
+      margin:9px 0 6px;
       color:var(--muted);
-      font-size:12px;
+      font-size:10px;
       text-transform:uppercase;
       font-weight:950;
+      letter-spacing:.04em;
     }
 
-    input[type="range"]{
+    input[type="range"],
+    input[type="number"]{
       width:100%;
       accent-color:var(--accent);
     }
+
+    input[type="number"]{
+      min-height:40px;
+      border:1px solid rgba(147,197,253,.30);
+      border-radius:10px;
+      padding:8px 10px;
+      background:rgba(2,6,23,.45);
+      color:#f8fbff;
+      font:900 14px ui-sans-serif,system-ui;
+    }
+
+    .inputRow{
+      display:grid;
+      grid-template-columns:1fr 82px;
+      gap:8px;
+      align-items:center;
+    }
+
+    .presetGrid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:7px;
+    }
+
+    .presetGrid button{
+      min-height:36px;
+      padding:8px 6px;
+      font-size:11px;
+    }
+
+    .presetGrid button.minor{border-color:rgba(245,158,11,.44);background:rgba(245,158,11,.13);color:#fde68a}
+    .presetGrid button.moderate{border-color:rgba(244,63,94,.46);background:rgba(244,63,94,.13);color:#fecdd3}
+    .presetGrid button.major{border-color:rgba(139,92,246,.50);background:rgba(139,92,246,.16);color:#ddd6fe}
 
     .rangeRow{
       display:flex;
@@ -262,6 +302,14 @@
       margin:8px 0 0;
     }
 
+    .sourceLine,
+    .mutedLine{
+      color:var(--muted);
+      font-size:11px;
+      line-height:1.35;
+      margin:8px 0 0;
+    }
+
     .statGrid{
       display:grid;
       grid-template-columns:1fr 1fr;
@@ -271,7 +319,7 @@
     .stat{
       min-height:74px;
       padding:10px;
-      border-radius:14px;
+      border-radius:12px;
       border:1px solid rgba(255,255,255,.12);
       background:rgba(255,255,255,.06);
     }
@@ -292,6 +340,92 @@
     }
 
     .stat.wide{grid-column:1 / -1}
+
+    .miniStats{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+    }
+
+    .miniStat{
+      min-height:58px;
+      padding:9px;
+      border-radius:10px;
+      background:rgba(2,6,23,.32);
+      border:1px solid rgba(255,255,255,.10);
+    }
+
+    .miniStat .k,
+    .metricRow .k{
+      color:#9fb0d1;
+      font-size:10px;
+      line-height:1.2;
+      text-transform:uppercase;
+      font-weight:950;
+    }
+
+    .miniStat .v{
+      margin-top:5px;
+      color:#eef6ff;
+      font-size:18px;
+      line-height:1.1;
+      font-weight:950;
+    }
+
+    .metricRows{
+      display:grid;
+      gap:7px;
+    }
+
+    .metricRow{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:10px;
+      align-items:baseline;
+      padding:8px 9px;
+      border-radius:10px;
+      background:rgba(2,6,23,.30);
+      border:1px solid rgba(255,255,255,.09);
+    }
+
+    .metricRow .v{
+      color:#edf6ff;
+      font-size:13px;
+      font-weight:950;
+      text-align:right;
+      white-space:nowrap;
+    }
+
+    .pointHero{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      align-items:end;
+      padding:10px;
+      margin-bottom:8px;
+      border-radius:12px;
+      background:linear-gradient(135deg,rgba(34,211,238,.16),rgba(251,113,133,.10));
+      border:1px solid rgba(125,211,252,.26);
+    }
+
+    .pointHero .height{
+      font-size:31px;
+      line-height:1;
+      font-weight:950;
+    }
+
+    .pointHero .tag{
+      display:inline-flex;
+      align-items:center;
+      min-height:25px;
+      padding:4px 8px;
+      border-radius:999px;
+      background:rgba(255,255,255,.10);
+      color:#dbeafe;
+      font-size:11px;
+      font-weight:950;
+      text-transform:uppercase;
+    }
 
     .legend{
       display:grid;
@@ -360,6 +494,25 @@
       box-shadow:0 0 0 3px rgba(125,211,252,.35);
     }
 
+    .inspectMarker{
+      width:22px;
+      height:22px;
+      border-radius:999px;
+      background:#fb7185;
+      border:4px solid #fff7ed;
+      box-shadow:0 0 0 4px rgba(251,113,133,.28), 0 8px 22px rgba(2,6,23,.55);
+    }
+
+    .popupStats{
+      min-width:210px;
+      display:grid;
+      gap:6px;
+      font-size:12px;
+    }
+
+    .popupStats strong{color:#f8fafc}
+    .popupStats .tiny{color:#aab8ce;font-size:11px}
+
     @media (max-width: 980px){
       html,body{overflow:auto;height:auto;min-height:100%}
       #map{position:relative;height:58vh;min-height:420px}
@@ -392,6 +545,7 @@
       h1{font-size:28px;white-space:normal}
       .bottomPanel{min-height:220px}
       .chartWrap{height:168px}
+      .miniStats{grid-template-columns:1fr 1fr}
     }
   </style>
 </head>
@@ -409,63 +563,104 @@
 
     <aside class="leftPanel">
       <section class="panelBlock">
-        <div class="panelTitle">Cross Section <span class="pill" id="sampleCountPill">0 samples</span></div>
+        <div class="panelTitle">Section <span class="pill" id="sampleCountPill">0 samples</span></div>
         <div class="buttonGrid">
           <button id="drawBtn">Draw section</button>
           <button id="clearBtn" class="secondary">Clear</button>
-          <button id="sampleBtn" class="secondary">Sample road cut</button>
+          <button id="sampleBtn" class="secondary">Reset line</button>
           <button id="exportBtn" class="secondary">Export CSV</button>
         </div>
-        <p class="helpText">Click the map twice to draw a line through the terrain. The profile samples the clipped 5 ft LiDAR-derived DEM.</p>
+        <p class="sourceLine">Click map or profile to move the inspection dot.</p>
       </section>
 
       <section class="panelBlock">
-        <div class="panelTitle">Road-Risk Threshold <span class="pill" id="thresholdPill">6.0 ft</span></div>
-        <label for="threshold">Elevation below this value is highlighted</label>
-        <input id="threshold" type="range" min="2" max="14" value="6" step="0.25" />
+        <div class="panelTitle">Water Threshold <span class="pill" id="thresholdPill">2.55 ft NAVD88</span></div>
+        <div class="presetGrid">
+          <button class="minor" data-threshold-preset="2.55">Minor</button>
+          <button class="moderate" data-threshold-preset="3.55">Moderate</button>
+          <button class="major" data-threshold-preset="4.55">Major</button>
+        </div>
+        <label for="thresholdNumber">Custom stage, ft NAVD88</label>
+        <div class="inputRow">
+          <input id="thresholdNumber" type="number" min="-2" max="14" value="2.55" step="0.05" />
+          <button id="applyThresholdBtn" class="secondary">Apply</button>
+        </div>
+        <input id="threshold" type="range" min="-2" max="14" value="2.55" step="0.05" />
         <div class="rangeRow">
-          <span>2 ft</span>
+          <span>-2 ft</span>
           <span>14 ft</span>
         </div>
+        <label for="uncertaintyNumber">Vertical uncertainty, +/- ft</label>
+        <input id="uncertaintyNumber" type="number" min="0" max="3" value="0.50" step="0.05" />
       </section>
 
       <section class="panelBlock">
-        <div class="panelTitle">DEM Source <span class="pill">5 ft grid</span></div>
+        <div class="panelTitle">Map Layers <span class="pill">5 ft DEM</span></div>
         <div class="legend">
-          <div class="legendRow"><span class="swatch" style="background:#38bdf8"></span> Cross-section line</div>
-          <div class="legendRow"><span class="swatch" style="background:#fb7185"></span> Below selected threshold</div>
-          <div class="legendRow"><span class="swatch" style="background:#ef4444"></span> Seaside Heights boundary</div>
-          <div class="legendRow"><span class="swatch" style="background:#64748b"></span> USGS 3DEP bare-earth DEM</div>
+          <div class="legendRow"><span class="swatch" style="background:#38bdf8"></span> Section</div>
+          <div class="legendRow"><span class="swatch" style="background:#fb7185"></span> Exposed reach</div>
+          <div class="legendRow"><span class="swatch" style="background:#ef4444"></span> Borough</div>
+          <div class="legendRow"><span class="swatch" style="background:#64748b"></span> Hillshade</div>
         </div>
-        <p class="helpText" id="sourceText">DEM metadata loading...</p>
+        <p class="sourceLine" id="sourceText">Loading source...</p>
       </section>
     </aside>
 
     <aside class="rightPanel">
       <section class="statGrid">
         <div class="stat">
-          <div class="k">Lowest point</div>
+          <div class="k">Low point</div>
           <div class="v" id="minElev">-</div>
         </div>
         <div class="stat">
-          <div class="k">Highest point</div>
-          <div class="v" id="maxElev">-</div>
+          <div class="k">Exposed share</div>
+          <div class="v" id="exposedPct">-</div>
         </div>
         <div class="stat">
-          <div class="k">Profile length</div>
+          <div class="k">Length</div>
           <div class="v" id="profileLen">-</div>
         </div>
         <div class="stat">
-          <div class="k">Below threshold</div>
+          <div class="k">Exposed</div>
           <div class="v" id="riskLen">-</div>
         </div>
         <div class="stat wide">
-          <div class="k">Most exposed segment</div>
+          <div class="k">Longest continuous exposure</div>
           <div class="v" id="riskSummary">Draw a section</div>
         </div>
       </section>
-      <a class="fileLink" href="seaside_heights_dem_5ft_cog.tif" download>Download DEM COG</a>
-      <a class="fileLink" href="dem_metadata.json" download>Download metadata</a>
+
+      <section class="panelBlock">
+        <div class="panelTitle">Floodmapper Context <span class="pill" id="gaugePill">Gauge</span></div>
+        <div class="miniStats">
+          <div class="miniStat"><div class="k">Record tide</div><div class="v" id="recordTide">-</div></div>
+          <div class="miniStat"><div class="k">Minor days</div><div class="v" id="minorDays">-</div></div>
+          <div class="miniStat"><div class="k">High tides</div><div class="v" id="highTideCount">-</div></div>
+          <div class="miniStat"><div class="k">Trend</div><div class="v" id="trendRate">-</div></div>
+        </div>
+      </section>
+
+      <section class="panelBlock">
+        <div class="panelTitle">Inspect Dot <span class="pill" id="pointDistance">No point</span></div>
+        <div class="pointHero">
+          <div>
+            <div class="k">Height of dot</div>
+            <div class="height" id="pointElev">-</div>
+          </div>
+          <span class="tag" id="pointClass">-</span>
+        </div>
+        <div class="metricRows">
+          <div class="metricRow"><div class="k">Clearance vs threshold</div><div class="v" id="pointClearance">-</div></div>
+          <div class="metricRow"><div class="k">Recurrence interval</div><div class="v" id="pointReturn">-</div></div>
+          <div class="metricRow"><div class="k">Exceedances in archive</div><div class="v" id="pointExceedances">-</div></div>
+          <div class="metricRow"><div class="k">Uncertainty band</div><div class="v" id="pointUncertainty">-</div></div>
+          <div class="metricRow"><div class="k">MLLW equivalent</div><div class="v" id="pointMllw">-</div></div>
+        </div>
+        <p class="sourceLine" id="pointAnalog">Click the line, profile, or dot.</p>
+      </section>
+
+      <a class="fileLink" href="seaside_heights_dem_5ft_cog.tif" download>DEM COG</a>
+      <a class="fileLink" href="dem_metadata.json" download>Metadata</a>
     </aside>
 
     <section class="bottomPanel">
@@ -484,9 +679,11 @@
     const DEM_URL = "seaside_heights_dem_5ft_cog.tif";
     const METADATA_URL = "dem_metadata.json";
     const BOUNDARY_URL = "seaside_heights_boundary.geojson";
+    const FLOOD_STATS_URL = "flood_stats.json";
 
     const state = {
       metadata:null,
+      floodStats:null,
       raster:null,
       width:0,
       height:0,
@@ -497,9 +694,12 @@
       markers:[],
       line:null,
       riskLine:null,
+      inspectMarker:null,
       profile:[],
       chart:null,
-      thresholdFt:6
+      selectedIndex:null,
+      thresholdFt:2.55,
+      uncertaintyFt:.5
     };
 
     const map = L.map("map", { zoomControl:true, preferCanvas:true });
@@ -540,7 +740,7 @@
         ctx.setLineDash([]);
         ctx.fillStyle = "rgba(251,113,133,.95)";
         ctx.font = "700 11px ui-sans-serif, system-ui";
-        ctx.fillText(`${state.thresholdFt.toFixed(1)} ft threshold`, chartArea.left + 8, y - 7);
+        ctx.fillText(`${state.thresholdFt.toFixed(2)} ft threshold`, chartArea.left + 8, y - 7);
         ctx.restore();
       }
     };
@@ -550,7 +750,50 @@
     function $(id){ return document.getElementById(id); }
     function fmtFt(v, digits=1){ return Number.isFinite(v) ? `${v.toFixed(digits)} ft` : "-"; }
     function fmtLen(v){ return Number.isFinite(v) ? v >= 5280 ? `${(v/5280).toFixed(2)} mi` : `${Math.round(v)} ft` : "-"; }
+    function fmtSigned(v, digits=1){ return Number.isFinite(v) ? `${v >= 0 ? "+" : ""}${v.toFixed(digits)} ft` : "-"; }
+    function fmtCount(v){ return Number.isFinite(v) ? Math.round(v).toLocaleString() : "-"; }
     function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
+
+    function classifyStage(stageFt){
+      const thresholds = state.floodStats?.thresholds?.navd88 || { minor:2.55, moderate:3.55, major:4.55 };
+      if(stageFt >= thresholds.major) return { label:"Major+", color:"var(--major)" };
+      if(stageFt >= thresholds.moderate) return { label:"Moderate", color:"var(--moderate)" };
+      if(stageFt >= thresholds.minor) return { label:"Minor", color:"var(--minor)" };
+      return { label:"Below minor", color:"var(--ok)" };
+    }
+
+    function countDailyExceedances(stageFt){
+      const peaks = state.floodStats?.dailyPeakNavd88Ft || [];
+      let lo = 0;
+      let hi = peaks.length;
+      while(lo < hi){
+        const mid = Math.floor((lo + hi) / 2);
+        if(peaks[mid] >= stageFt) hi = mid;
+        else lo = mid + 1;
+      }
+      return peaks.length - lo;
+    }
+
+    function recurrenceText(stageFt){
+      const years = state.floodStats?.archive?.years || 0;
+      const count = countDailyExceedances(stageFt);
+      if(!years || !state.floodStats?.dailyPeakNavd88Ft?.length) return "-";
+      if(count <= 0) return `>${years.toFixed(1)} yr`;
+      const perYear = count / years;
+      if(perYear >= 1) return `~${(365.2425 / perYear).toFixed(1)} days`;
+      return `~${(years / count).toFixed(1)} yr`;
+    }
+
+    function topEventText(stageFt){
+      const topEvents = state.floodStats?.topEvents || [];
+      if(!topEvents.length) return "Observed archive loading.";
+      const record = topEvents[0];
+      if(stageFt > record.heightNavd88Ft){
+        return `Above observed record by ${(stageFt - record.heightNavd88Ft).toFixed(1)} ft. Record: ${record.displayDate}, ${record.heightNavd88Ft.toFixed(2)} ft NAVD88.`;
+      }
+      const nearest = topEvents.reduce((best, item) => Math.abs(item.heightNavd88Ft - stageFt) < Math.abs(best.heightNavd88Ft - stageFt) ? item : best, topEvents[0]);
+      return `Nearest top event: #${nearest.rank}, ${nearest.displayDate}, ${nearest.heightNavd88Ft.toFixed(2)} ft NAVD88.`;
+    }
 
     function setReady(ok, text){
       $("readyText").textContent = text;
@@ -622,14 +865,13 @@
       $("sampleCountPill").textContent = `${valid.length} samples`;
       if(!valid.length){
         $("minElev").textContent = "-";
-        $("maxElev").textContent = "-";
+        $("exposedPct").textContent = "-";
         $("profileLen").textContent = "-";
         $("riskLen").textContent = "-";
         $("riskSummary").textContent = "No DEM samples";
         return;
       }
       const min = valid.reduce((a,b) => b.elevationFt < a.elevationFt ? b : a, valid[0]);
-      const max = valid.reduce((a,b) => b.elevationFt > a.elevationFt ? b : a, valid[0]);
       const len = valid[valid.length - 1].distanceFt - valid[0].distanceFt;
       let riskLen = 0;
       let longestRun = 0;
@@ -646,12 +888,12 @@
       }
 
       $("minElev").textContent = fmtFt(min.elevationFt, 1);
-      $("maxElev").textContent = fmtFt(max.elevationFt, 1);
+      $("exposedPct").textContent = `${Math.round((riskLen / Math.max(len, 1)) * 100)}%`;
       $("profileLen").textContent = fmtLen(len);
       $("riskLen").textContent = fmtLen(riskLen);
       $("riskSummary").textContent = riskLen > 0
-        ? `${Math.round((riskLen / Math.max(len, 1)) * 100)}% of sampled profile is below ${state.thresholdFt.toFixed(1)} ft`
-        : `No sampled terrain below ${state.thresholdFt.toFixed(1)} ft`;
+        ? fmtLen(longestRun)
+        : "None";
     }
 
     function riskSegments(profile){
@@ -691,6 +933,7 @@
       const labels = profile.map(p => Math.round(p.distanceFt));
       const data = profile.map(p => Number.isFinite(p.elevationFt) ? p.elevationFt : null);
       const riskData = profile.map(p => Number.isFinite(p.elevationFt) && p.elevationFt <= state.thresholdFt ? p.elevationFt : null);
+      const inspectData = profile.map((p, i) => i === state.selectedIndex && Number.isFinite(p.elevationFt) ? p.elevationFt : null);
       $("chartStatus").textContent = valid.length ? `${valid.length} DEM samples` : "Waiting for a line";
       if(state.chart) state.chart.destroy();
       state.chart = new Chart(ctx, {
@@ -718,6 +961,17 @@
               borderWidth:4,
               tension:.12,
               spanGaps:false
+            },
+            {
+              label:"Inspect dot",
+              data:inspectData,
+              borderColor:"#fff7ed",
+              backgroundColor:"#fb7185",
+              pointRadius:6,
+              pointHoverRadius:8,
+              borderWidth:0,
+              showLine:false,
+              spanGaps:false
             }
           ]
         },
@@ -725,6 +979,10 @@
           responsive:true,
           maintainAspectRatio:false,
           interaction:{ mode:"index", intersect:false },
+          onClick(event){
+            const hits = state.chart.getElementsAtEventForMode(event, "nearest", { intersect:false }, true);
+            if(hits.length) selectProfileIndex(hits[0].index, true, true);
+          },
           plugins:{
             legend:{ labels:{ color:"#dbeafe", usePointStyle:true, boxWidth:8 } },
             tooltip:{
@@ -750,6 +1008,134 @@
       });
     }
 
+    function inspectIcon(){
+      return L.divIcon({
+        className:"",
+        html:"<div class='inspectMarker'></div>",
+        iconSize:[22,22],
+        iconAnchor:[11,11]
+      });
+    }
+
+    function pointStats(point){
+      if(!point || !Number.isFinite(point.elevationFt)) return null;
+      const mllwOffset = state.floodStats?.datum?.mllwOffsetFromNavd88Ft ?? .45;
+      const uncertainty = state.uncertaintyFt;
+      const stageClass = classifyStage(point.elevationFt);
+      const exceedances = countDailyExceedances(point.elevationFt);
+      const clearance = point.elevationFt - state.thresholdFt;
+      return {
+        elevationFt:point.elevationFt,
+        mllwFt:point.elevationFt + mllwOffset,
+        clearance,
+        uncertainty,
+        stageClass,
+        exceedances,
+        recurrence:recurrenceText(point.elevationFt),
+        analog:topEventText(point.elevationFt),
+        risk:clearance <= -uncertainty ? "Below threshold"
+          : clearance <= uncertainty ? "Within uncertainty"
+          : "Above threshold"
+      };
+    }
+
+    function popupHtml(point, stats){
+      if(!stats) return "";
+      return `
+        <div class="popupStats">
+          <strong>${fmtFt(stats.elevationFt, 2)} NAVD88</strong>
+          <span>${fmtLen(point.distanceFt)} along section</span>
+          <span>Recurrence: ${stats.recurrence}</span>
+          <span>Clearance: ${fmtSigned(stats.clearance, 2)}</span>
+          <span class="tiny">${stats.risk}; +/-${stats.uncertainty.toFixed(2)} ft uncertainty</span>
+        </div>
+      `;
+    }
+
+    function resetInspection(){
+      state.selectedIndex = null;
+      if(state.inspectMarker){
+        map.removeLayer(state.inspectMarker);
+        state.inspectMarker = null;
+      }
+      $("pointDistance").textContent = "No point";
+      $("pointElev").textContent = "-";
+      $("pointClass").textContent = "-";
+      $("pointClearance").textContent = "-";
+      $("pointReturn").textContent = "-";
+      $("pointExceedances").textContent = "-";
+      $("pointUncertainty").textContent = "-";
+      $("pointMllw").textContent = "-";
+      $("pointAnalog").textContent = "Click the line, profile, or dot.";
+    }
+
+    function updateInspection(openPopup=false){
+      const point = state.profile[state.selectedIndex];
+      const stats = pointStats(point);
+      if(!stats){
+        resetInspection();
+        return;
+      }
+      $("pointDistance").textContent = fmtLen(point.distanceFt);
+      $("pointElev").textContent = fmtFt(stats.elevationFt, 1);
+      $("pointClass").textContent = stats.stageClass.label;
+      $("pointClass").style.background = stats.stageClass.color;
+      $("pointClearance").textContent = fmtSigned(stats.clearance, 2);
+      $("pointReturn").textContent = stats.recurrence;
+      $("pointExceedances").textContent = `${fmtCount(stats.exceedances)} days`;
+      $("pointUncertainty").textContent = `${fmtFt(stats.elevationFt - stats.uncertainty, 1)} - ${fmtFt(stats.elevationFt + stats.uncertainty, 1)}`;
+      $("pointMllw").textContent = fmtFt(stats.mllwFt, 2);
+      $("pointAnalog").textContent = stats.analog;
+
+      const latLng = L.latLng(point.lat, point.lng);
+      if(!state.inspectMarker){
+        state.inspectMarker = L.marker(latLng, { icon:inspectIcon(), keyboard:true, title:"Inspect point" }).addTo(map);
+        state.inspectMarker.on("click", () => state.inspectMarker.openPopup());
+      }else{
+        state.inspectMarker.setLatLng(latLng);
+      }
+      state.inspectMarker.bindPopup(popupHtml(point, stats));
+      if(openPopup) state.inspectMarker.openPopup();
+    }
+
+    function nearestProfileIndex(latLng){
+      if(!state.profile.length) return null;
+      let bestIndex = null;
+      let bestDistance = Infinity;
+      for(let i=0; i<state.profile.length; i++){
+        const p = state.profile[i];
+        if(!Number.isFinite(p.elevationFt)) continue;
+        const distance = haversineFeet(latLng, L.latLng(p.lat, p.lng));
+        if(distance < bestDistance){
+          bestDistance = distance;
+          bestIndex = i;
+        }
+      }
+      return bestIndex;
+    }
+
+    function defaultInspectionIndex(profile){
+      let bestIndex = null;
+      for(let i=0; i<profile.length; i++){
+        const p = profile[i];
+        if(!Number.isFinite(p.elevationFt)) continue;
+        if(bestIndex === null || p.elevationFt < profile[bestIndex].elevationFt) bestIndex = i;
+      }
+      return bestIndex;
+    }
+
+    function selectProfileIndex(index, rerender=false, openPopup=false){
+      if(index === null || index === undefined || !state.profile.length) return;
+      let nextIndex = clamp(Math.round(index), 0, state.profile.length - 1);
+      if(!Number.isFinite(state.profile[nextIndex]?.elevationFt)){
+        nextIndex = nearestProfileIndex(L.latLng(state.profile[nextIndex].lat, state.profile[nextIndex].lng));
+      }
+      if(nextIndex === null || nextIndex === undefined) return;
+      state.selectedIndex = nextIndex;
+      updateInspection(openPopup);
+      if(rerender) renderChart(state.profile);
+    }
+
     function clearSection(){
       state.pendingPoints = [];
       state.markers.forEach(m => map.removeLayer(m));
@@ -759,6 +1145,7 @@
       state.line = null;
       state.riskLine = null;
       state.profile = [];
+      resetInspection();
       updateStats([]);
       renderChart([]);
       $("chartStatus").textContent = "Waiting for a line";
@@ -785,7 +1172,16 @@
         opacity:.95,
         lineCap:"round"
       }).addTo(map);
+      state.line.on("click", event => {
+        const idx = nearestProfileIndex(event.latlng);
+        if(idx !== null) selectProfileIndex(idx, true, true);
+      });
       for(const marker of state.markers){
+        marker.on("click", event => {
+          if(event.originalEvent) L.DomEvent.stopPropagation(event.originalEvent);
+          const idx = nearestProfileIndex(marker.getLatLng());
+          if(idx !== null) selectProfileIndex(idx, true, true);
+        });
         marker.on("drag", () => {
           const pts = state.markers.map(m => m.getLatLng());
           state.line.setLatLngs(pts);
@@ -805,9 +1201,11 @@
         return;
       }
       state.profile = buildProfile(a, b);
+      state.selectedIndex = defaultInspectionIndex(state.profile);
       updateStats(state.profile);
       renderRiskSegments(state.profile);
       renderChart(state.profile);
+      updateInspection(false);
     }
 
     function setDrawMode(active){
@@ -829,10 +1227,12 @@
     function exportCsv(){
       if(!state.profile.length) return;
       const lines = [
-        "distance_ft,elevation_ft,latitude,longitude",
+        "distance_ft,elevation_ft_navd88,threshold_ft_navd88,clearance_ft,latitude,longitude",
         ...state.profile.map(p => [
           p.distanceFt.toFixed(2),
           Number.isFinite(p.elevationFt) ? p.elevationFt.toFixed(3) : "",
+          state.thresholdFt.toFixed(3),
+          Number.isFinite(p.elevationFt) ? (p.elevationFt - state.thresholdFt).toFixed(3) : "",
           p.lat.toFixed(8),
           p.lng.toFixed(8)
         ].join(","))
@@ -848,16 +1248,51 @@
       URL.revokeObjectURL(url);
     }
 
+    function updateFloodStatsPanel(){
+      const stats = state.floodStats;
+      if(!stats) return;
+      const record = stats.topEvents?.[0];
+      $("gaugePill").textContent = stats.gaugeName;
+      $("recordTide").textContent = record ? `${record.heightNavd88Ft.toFixed(2)} ft` : "-";
+      $("minorDays").textContent = `${fmtCount(stats.archive.classificationCounts.minor)} days`;
+      $("highTideCount").textContent = fmtCount(stats.tideModel.highTideCount);
+      $("trendRate").textContent = `${(stats.tideModel.trendFtPerYear * 100).toFixed(1)} ft/cent`;
+      $("uncertaintyNumber").value = (stats.verticalUncertaintyFt || state.uncertaintyFt).toFixed(2);
+      state.uncertaintyFt = Number($("uncertaintyNumber").value);
+    }
+
+    function setThreshold(value){
+      state.thresholdFt = clamp(Number(value), -2, 14);
+      $("threshold").value = state.thresholdFt.toFixed(2);
+      $("thresholdNumber").value = state.thresholdFt.toFixed(2);
+      $("thresholdPill").textContent = `${state.thresholdFt.toFixed(2)} ft NAVD88`;
+      if(state.profile.length){
+        updateStats(state.profile);
+        renderRiskSegments(state.profile);
+        renderChart(state.profile);
+        updateInspection(false);
+      }
+    }
+
+    function setUncertainty(value){
+      state.uncertaintyFt = clamp(Number(value), 0, 3);
+      $("uncertaintyNumber").value = state.uncertaintyFt.toFixed(2);
+      updateInspection(false);
+    }
+
     async function loadApp(){
-      const [metadata, boundary] = await Promise.all([
+      const [metadata, boundary, floodStats] = await Promise.all([
         fetch(METADATA_URL).then(r => r.json()),
-        fetch(BOUNDARY_URL).then(r => r.json())
+        fetch(BOUNDARY_URL).then(r => r.json()),
+        fetch(FLOOD_STATS_URL).then(r => r.json())
       ]);
       state.metadata = metadata;
+      state.floodStats = floodStats;
       state.width = metadata.width;
       state.height = metadata.height;
       state.nodata = metadata.nodata;
       state.boundsMerc = metadata.webMercatorBounds;
+      updateFloodStatsPanel();
 
       boundaryLayer.addData(boundary);
       const leafletBounds = L.latLngBounds(metadata.leafletBounds);
@@ -867,7 +1302,7 @@
         interactive:false
       }).addTo(hillshadeLayerGroup);
 
-      $("sourceText").textContent = `${metadata.source}. Pixel size ${metadata.pixelSizeFeet.toFixed(2)} ft. Elevation range ${fmtFt(metadata.minFeet, 1)} to ${fmtFt(metadata.maxFeet, 1)}.`;
+      $("sourceText").textContent = `USGS 3DEP | ${metadata.pixelSizeFeet.toFixed(0)} ft grid | ${floodStats.gaugeName} gauge`;
 
       const demResponse = await fetch(DEM_URL);
       if(!demResponse.ok) throw new Error(`DEM request failed: ${demResponse.status}`);
@@ -889,18 +1324,22 @@
       defaultSection();
     });
     $("exportBtn").addEventListener("click", exportCsv);
-    $("threshold").addEventListener("input", event => {
-      state.thresholdFt = Number(event.target.value);
-      $("thresholdPill").textContent = `${state.thresholdFt.toFixed(1)} ft`;
-      if(state.profile.length){
-        updateStats(state.profile);
-        renderRiskSegments(state.profile);
-        renderChart(state.profile);
-      }
+    $("applyThresholdBtn").addEventListener("click", () => setThreshold($("thresholdNumber").value));
+    $("thresholdNumber").addEventListener("keydown", event => {
+      if(event.key === "Enter") setThreshold(event.currentTarget.value);
+    });
+    $("threshold").addEventListener("input", event => setThreshold(event.target.value));
+    $("uncertaintyNumber").addEventListener("input", event => setUncertainty(event.target.value));
+    document.querySelectorAll("[data-threshold-preset]").forEach(button => {
+      button.addEventListener("click", () => setThreshold(button.dataset.thresholdPreset));
     });
 
     map.on("click", event => {
-      if(!state.drawMode) return;
+      if(!state.drawMode){
+        const idx = nearestProfileIndex(event.latlng);
+        if(idx !== null) selectProfileIndex(idx, true, true);
+        return;
+      }
       state.pendingPoints.push(event.latlng);
       if(state.pendingPoints.length === 1){
         state.markers.forEach(m => map.removeLayer(m));
