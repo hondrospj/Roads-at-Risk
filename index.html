@@ -516,6 +516,97 @@
       font-size:10px;
     }
 
+    .chartKey{
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      flex-wrap:wrap;
+      gap:6px;
+      min-height:28px;
+      margin:0 0 6px;
+    }
+
+    .tinyChartLabel .chartKey{
+      min-height:0;
+      margin:0;
+      justify-content:flex-end;
+      flex:1 1 auto;
+    }
+
+    .keyToggle{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      min-height:26px;
+      margin:0;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(147,197,253,.18);
+      background:rgba(2,6,23,.28);
+      color:#dbeafe;
+      font-size:10px;
+      line-height:1;
+      font-weight:900;
+      text-transform:none;
+      letter-spacing:0;
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .keyToggle input{
+      appearance:none;
+      width:13px;
+      height:13px;
+      min-width:13px;
+      margin:0;
+      border-radius:4px;
+      border:1px solid rgba(191,219,254,.62);
+      background:rgba(15,23,42,.95);
+      box-shadow:inset 0 0 0 2px rgba(15,23,42,.95);
+    }
+
+    .keyToggle input:checked{
+      background:var(--key-color, #7dd3fc);
+      border-color:var(--key-color, #7dd3fc);
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.3 6.5 11.4 12.8 4.6' fill='none' stroke='%2307111f' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-size:12px 12px;
+      background-position:center;
+      background-repeat:no-repeat;
+    }
+
+    .keyToggle.isMuted{
+      opacity:.48;
+    }
+
+    .keySwatch{
+      width:18px;
+      height:4px;
+      border-radius:999px;
+      background:var(--key-color, #7dd3fc);
+      box-shadow:0 0 0 1px rgba(255,255,255,.10);
+    }
+
+    .keySwatch.isArea{
+      width:17px;
+      height:10px;
+      border-radius:4px;
+      opacity:.72;
+    }
+
+    .keySwatch.isDashed{
+      height:0;
+      background:transparent;
+      border-top:2px dashed var(--key-color, #7dd3fc);
+      box-shadow:none;
+    }
+
+    .keySwatch.isPoint{
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      border:2px solid #fff7ed;
+    }
+
     .chartWrap{
       flex:1;
       min-height:0;
@@ -1400,6 +1491,40 @@
       gap:8px;
     }
 
+    .shell.paneExpanded .chartKey{
+      gap:10px;
+      min-height:40px;
+      margin-bottom:10px;
+    }
+
+    .shell.paneExpanded .keyToggle{
+      min-height:36px;
+      padding:7px 11px;
+      gap:8px;
+      font-size:14px;
+    }
+
+    .shell.paneExpanded .keyToggle input{
+      width:17px;
+      height:17px;
+      min-width:17px;
+    }
+
+    .shell.paneExpanded .keySwatch{
+      width:26px;
+      height:5px;
+    }
+
+    .shell.paneExpanded .keySwatch.isArea{
+      width:24px;
+      height:13px;
+    }
+
+    .shell.paneExpanded .keySwatch.isPoint{
+      width:13px;
+      height:13px;
+    }
+
     .shell.paneExpanded .floodHistoryPane .tinyChartWrap{
       min-height:300px;
     }
@@ -1680,6 +1805,7 @@
               <span class="pill" id="thresholdPill">2.55 ft</span>
             </div>
           </div>
+          <div class="chartKey" id="profileChartKey" aria-label="Cross section key"></div>
           <div class="chartWrap"><canvas id="profileChart"></canvas></div>
         </div>
       </section>
@@ -1698,10 +1824,12 @@
           </div>
           <div class="tinyChartLabel annualLabel">
             <span>Flood days by year</span>
+            <div class="chartKey" id="annualFloodKey" aria-label="Flood days by year key"></div>
           </div>
           <div class="tinyChartWrap annualChartWrap"><canvas id="dotAnnualChart"></canvas></div>
           <div class="tinyChartLabel seasonLabel">
             <span>Seasonal pattern</span>
+            <div class="chartKey" id="doyFloodKey" aria-label="Seasonal pattern key"></div>
           </div>
           <div class="tinyChartWrap seasonChartWrap"><canvas id="dotDoyChart"></canvas></div>
           <p class="modelNote" id="projectionNote"></p>
@@ -1893,32 +2021,58 @@
         point:expanded ? 8 : 6
       };
     }
-    function linkedLegendClick(event, legendItem, legend){
-      const chart = legend.chart;
-      const dataset = chart.data.datasets[legendItem.datasetIndex];
-      const group = dataset?.legendGroup;
-      const visible = chart.isDatasetVisible(legendItem.datasetIndex);
+    function keyColor(dataset){
+      const isRange = String(dataset.label || "").toLowerCase().includes("range");
+      const color = dataset.legendColor || (isRange ? dataset.backgroundColor : dataset.borderColor) || dataset.backgroundColor;
+      return Array.isArray(color) ? color[0] : String(color || "#7dd3fc");
+    }
+    function keySwatchClass(dataset){
+      const classes = ["keySwatch"];
+      if(dataset.showLine === false) classes.push("isPoint");
+      else if(Array.isArray(dataset.borderDash) && dataset.borderDash.length) classes.push("isDashed");
+      else if(dataset.type === "bar" || String(dataset.label || "").toLowerCase().includes("range")) classes.push("isArea");
+      return classes.join(" ");
+    }
+    function setDatasetGroupVisibility(chart, datasetIndex, visible){
+      const dataset = chart?.data?.datasets?.[datasetIndex];
+      if(!chart || !dataset) return;
+      const group = dataset.legendGroup;
       chart.data.datasets.forEach((item, index) => {
-        if(index === legendItem.datasetIndex || (group && item.legendGroup === group)){
-          chart.setDatasetVisibility(index, !visible);
+        if(index === datasetIndex || (group && item.legendGroup === group)){
+          chart.setDatasetVisibility(index, visible);
         }
       });
-      chart.update();
+      chart.update("none");
     }
-    function legendOptions(paneId){
-      const fonts = chartFontSizes(paneId);
-      return {
-        display:true,
-        position:"top",
-        labels:{
-          color:"#dbeafe",
-          usePointStyle:true,
-          boxWidth:fonts.legend + 1,
-          font:{ size:fonts.legend, weight:"800" },
-          filter(item, data){ return !data.datasets[item.datasetIndex]?.legendHidden; }
-        },
-        onClick:linkedLegendClick
-      };
+    function renderChartKey(chart, containerId){
+      const container = $(containerId);
+      if(!container) return;
+      container.textContent = "";
+      if(!chart?.data?.datasets?.length) return;
+      chart.data.datasets.forEach((dataset, index) => {
+        if(dataset.legendHidden) return;
+        const visible = chart.isDatasetVisible(index);
+        const label = document.createElement("label");
+        label.className = `keyToggle${visible ? "" : " isMuted"}`;
+        label.style.setProperty("--key-color", keyColor(dataset));
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = visible;
+        checkbox.addEventListener("change", event => {
+          setDatasetGroupVisibility(chart, index, event.currentTarget.checked);
+          renderChartKey(chart, containerId);
+        });
+
+        const swatch = document.createElement("span");
+        swatch.className = keySwatchClass(dataset);
+
+        const text = document.createElement("span");
+        text.textContent = dataset.keyLabel || dataset.label || "Layer";
+
+        label.append(checkbox, swatch, text);
+        container.appendChild(label);
+      });
     }
     function chartVisibility(chart){
       const visibility = new Map();
@@ -2594,6 +2748,7 @@
             {
               label:"Elevation",
               data,
+              legendColor:"#22d3ee",
               borderColor:"#22d3ee",
               backgroundColor:"rgba(34,211,238,.16)",
               fill:true,
@@ -2604,7 +2759,9 @@
             },
             {
               label:"Exposed below threshold",
+              keyLabel:"Exposed",
               data:riskData,
+              legendColor:"#fb7185",
               borderColor:"#fb7185",
               backgroundColor:"rgba(251,113,133,.18)",
               pointRadius:0,
@@ -2614,7 +2771,9 @@
             },
             {
               label:"Flood threshold",
+              keyLabel:"Threshold",
               data:thresholdData,
+              legendColor:"#fb7185",
               borderColor:"#fb7185",
               backgroundColor:"#fb7185",
               pointRadius:0,
@@ -2626,7 +2785,9 @@
             },
             {
               label:"Selected location",
+              keyLabel:"Selected",
               data:inspectData,
+              legendColor:"#fb7185",
               borderColor:"#fff7ed",
               backgroundColor:"#fb7185",
               pointRadius:fonts.point,
@@ -2646,7 +2807,7 @@
             if(hits.length) selectProfileIndex(hits[0].index, true, true);
           },
           plugins:{
-            legend:legendOptions("crossSectionPane"),
+            legend:{ display:false },
             tooltip:{
               titleFont:{ size:fonts.tooltip, weight:"800" },
               bodyFont:{ size:fonts.tooltip },
@@ -2684,6 +2845,7 @@
       }else{
         state.chart = new Chart(ctx, config);
       }
+      renderChartKey(state.chart, "profileChartKey");
       resizeCharts();
     }
 
@@ -2724,6 +2886,7 @@
               type:"bar",
               label:"Observed",
               data:observed,
+              legendColor:"rgba(34,211,238,.82)",
               backgroundColor:"rgba(34,211,238,.72)",
               borderColor:"rgba(125,211,252,.96)",
               borderWidth:1,
@@ -2745,8 +2908,10 @@
             {
               type:"line",
               label:"Forecast range",
+              keyLabel:"Forecast band",
               legendGroup:"annualForecastRange",
               data:high,
+              legendColor:"rgba(251,191,36,.46)",
               borderWidth:0,
               pointRadius:0,
               backgroundColor:"rgba(251,191,36,.16)",
@@ -2758,6 +2923,7 @@
               type:"line",
               label:"Projection",
               data:mean,
+              legendColor:"rgba(251,191,36,.96)",
               borderColor:"rgba(251,191,36,.96)",
               backgroundColor:"rgba(251,191,36,.96)",
               borderDash:[7,5],
@@ -2776,7 +2942,7 @@
           animation:false,
           interaction:{mode:"index", intersect:false},
           plugins:{
-            legend:legendOptions("floodHistoryPane"),
+            legend:{ display:false },
             tooltip:{
               titleFont:{ size:fonts.tooltip, weight:"800" },
               bodyFont:{ size:fonts.tooltip },
@@ -2822,6 +2988,7 @@
       }else{
         state.annualFloodChart = new Chart(canvas, config);
       }
+      renderChartKey(state.annualFloodChart, "annualFloodKey");
       resizeCharts();
     }
 
@@ -2847,8 +3014,10 @@
           },
           {
             label:"Historic range",
+            keyLabel:"Historic band",
             legendGroup:"historicRange",
             data:bucketStats?.max || [],
+            legendColor:"rgba(148,163,184,.44)",
             borderWidth:0,
             pointRadius:0,
             backgroundColor:"rgba(148,163,184,.18)",
@@ -2859,6 +3028,7 @@
           {
             label:"Average",
             data:bucketStats?.avg || [],
+            legendColor:"rgba(255,255,255,.90)",
             borderColor:"rgba(255,255,255,.90)",
             backgroundColor:"rgba(255,255,255,.90)",
             borderWidth:fonts.line,
@@ -2870,6 +3040,7 @@
           {
             label:"Current",
             data:bucketStats?.current || [],
+            legendColor:"rgba(251,113,133,.95)",
             borderColor:"rgba(251,113,133,.95)",
             backgroundColor:"rgba(251,113,133,.95)",
             borderWidth:fonts.line + .8,
@@ -2893,8 +3064,10 @@
           },
           {
             label:"Forecast range",
+            keyLabel:"Forecast band",
             legendGroup:"seasonForecastRange",
             data:bucketStats?.forecastHigh || [],
+            legendColor:"rgba(251,191,36,.44)",
             borderWidth:0,
             pointRadius:0,
             backgroundColor:"rgba(251,191,36,.14)",
@@ -2905,6 +3078,7 @@
           {
             label:"Projection",
             data:bucketStats?.forecastMean || [],
+            legendColor:"rgba(251,191,36,.96)",
             borderColor:"rgba(251,191,36,.96)",
             backgroundColor:"rgba(251,191,36,.96)",
             borderDash:[7,5],
@@ -2922,7 +3096,7 @@
         animation:false,
         interaction:{mode:"index", intersect:false},
         plugins:{
-          legend:legendOptions("floodHistoryPane"),
+          legend:{ display:false },
           tooltip:{
             titleFont:{ size:fonts.tooltip, weight:"800" },
             bodyFont:{ size:fonts.tooltip },
@@ -2988,6 +3162,7 @@
       }else{
         state.doyFloodChart = new Chart(canvas, { type:"line", data, options });
       }
+      renderChartKey(state.doyFloodChart, "doyFloodKey");
       resizeCharts();
     }
 
