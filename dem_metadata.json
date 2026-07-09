@@ -1,0 +1,44 @@
+{
+  "name": "Roads at Risk - Seaside Heights DEM",
+  "source": "USGS 3DEP Bare Earth DEM Dynamic ImageServer",
+  "sourceUrl": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer",
+  "sourceDescription": "USGS 3D Elevation Program (3DEP) Bare Earth DEM Dynamic service; service metadata says data available as of 2026-06-23; checked 2026-07-08.",
+  "downloadedAt": "2026-07-08",
+  "processing": "Exported from USGS 3DEP at borough extent, masked to Seaside Heights Borough boundary, resampled to 1.524 m / 5 ft pixels, compressed as Cloud Optimized GeoTIFF.",
+  "horizontalCrs": "EPSG:3857",
+  "verticalUnits": "meters",
+  "displayElevationUnits": "feet",
+  "pixelSizeMeters": 1.524,
+  "pixelSizeFeet": 4.99999999998,
+  "width": 1546,
+  "height": 1721,
+  "nodata": -999999.0,
+  "minMeters": -1.038,
+  "maxMeters": 8.518,
+  "meanMeters": 1.168,
+  "stdDevMeters": 1.259,
+  "minFeet": -3.4055118110100002,
+  "maxFeet": 27.946194225610004,
+  "webMercatorBounds": [
+    -8247555.708975604,
+    4856757.910536047,
+    -8245199.6049756035,
+    4859380.714536047
+  ],
+  "leafletBounds": [
+    [
+      39.93676857101982,
+      -74.0890535
+    ],
+    [
+      39.954831700000014,
+      -74.06788825765825
+    ]
+  ],
+  "files": {
+    "demCog": "seaside_heights_dem_5ft_cog.tif",
+    "hillshadeCog": "seaside_heights_hillshade_cog.tif",
+    "hillshadePng": "seaside_heights_hillshade.png",
+    "boundaryGeojson": "seaside_heights_boundary.geojson"
+  }
+}
