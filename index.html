@@ -37,6 +37,9 @@
       --ok:#34d399;
       --ink:#07111f;
       --shadow:0 18px 48px rgba(0,0,0,.42);
+      --right-rail:340px;
+      --ui-gap:16px;
+      --cross-section-h:34vh;
     }
 
     *{box-sizing:border-box}
@@ -65,24 +68,29 @@
 
     .titleBar{
       position:absolute;
-      top:16px;
-      left:50%;
-      transform:translateX(-50%);
+      top:50%;
+      left:clamp(18px, 10vw, 170px);
+      width:min(34vw, 420px);
+      transform:translateY(-50%);
       display:flex;
+      flex-direction:column;
       align-items:center;
-      gap:16px;
+      justify-content:center;
+      gap:12px;
       min-height:64px;
-      padding:10px 14px 10px 20px;
-      border-radius:18px;
-      background:rgba(10,15,25,.90);
+      padding:16px 18px;
+      border-radius:16px;
+      background:rgba(10,15,25,.76);
       box-shadow:var(--shadow);
       border:1px solid rgba(255,255,255,.12);
       backdrop-filter:blur(12px);
       pointer-events:auto;
+      text-align:center;
     }
 
     .brandText{
       min-width:0;
+      width:100%;
     }
 
     .eyebrow{
@@ -136,39 +144,43 @@
     }
 
     .leftPanel{
-      top:16px;
-      left:16px;
-      width:326px;
-      max-height:calc(100vh - 182px);
+      top:calc(32vh + var(--ui-gap));
+      right:var(--ui-gap);
+      bottom:calc(var(--cross-section-h) + 32px);
+      width:var(--right-rail);
       overflow:auto;
-      padding:14px;
+      padding:10px;
     }
 
     .rightPanel{
-      top:16px;
-      right:16px;
-      width:336px;
-      max-height:calc(100vh - 198px);
+      top:var(--ui-gap);
+      right:var(--ui-gap);
+      width:var(--right-rail);
+      max-height:calc(32vh - 24px);
       overflow:auto;
-      padding:12px;
+      padding:10px;
       display:grid;
-      gap:10px;
+      gap:8px;
     }
 
     .bottomPanel{
-      left:16px;
-      right:16px;
-      bottom:16px;
-      min-height:164px;
-      padding:12px 14px 14px;
+      left:auto;
+      right:var(--ui-gap);
+      bottom:var(--ui-gap);
+      width:calc(50vw - 24px);
+      min-width:460px;
+      height:var(--cross-section-h);
+      min-height:238px;
+      max-height:360px;
+      padding:10px 12px 12px;
     }
 
     .panelBlock{
       border-radius:12px;
       border:1px solid rgba(255,255,255,.12);
       background:rgba(255,255,255,.045);
-      padding:11px;
-      margin-bottom:9px;
+      padding:10px;
+      margin-bottom:8px;
     }
 
     .panelBlock:last-child{margin-bottom:0}
@@ -178,8 +190,8 @@
       align-items:center;
       justify-content:space-between;
       gap:10px;
-      margin:0 0 10px;
-      font-size:15px;
+      margin:0 0 8px;
+      font-size:14px;
       font-weight:950;
     }
 
@@ -192,14 +204,15 @@
       background:rgba(96,165,250,.16);
       border:1px solid rgba(147,197,253,.3);
       color:#bfdbfe;
-      font-size:12px;
+      font-size:11px;
       font-weight:900;
+      white-space:nowrap;
     }
 
     .buttonGrid{
       display:grid;
       grid-template-columns:1fr 1fr;
-      gap:8px;
+      gap:7px;
     }
 
     button,
@@ -209,9 +222,9 @@
       background:rgba(96,165,250,.14);
       color:#dbeafe;
       border-radius:10px;
-      min-height:42px;
-      padding:10px 12px;
-      font-size:13px;
+      min-height:38px;
+      padding:8px 10px;
+      font-size:12px;
       font-weight:900;
       cursor:pointer;
       text-decoration:none;
@@ -252,7 +265,7 @@
     }
 
     input[type="number"]{
-      min-height:40px;
+      min-height:36px;
       border:1px solid rgba(147,197,253,.30);
       border-radius:10px;
       padding:8px 10px;
@@ -272,6 +285,18 @@
       display:grid;
       grid-template-columns:repeat(3,1fr);
       gap:7px;
+    }
+
+    .basemapGrid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:7px;
+    }
+
+    .basemapGrid button{
+      min-height:34px;
+      padding:7px 6px;
+      font-size:11px;
     }
 
     .presetGrid button{
@@ -313,13 +338,13 @@
     .statGrid{
       display:grid;
       grid-template-columns:1fr 1fr;
-      gap:8px;
+      gap:7px;
     }
 
     .stat{
-      min-height:74px;
-      padding:10px;
-      border-radius:12px;
+      min-height:56px;
+      padding:8px;
+      border-radius:10px;
       border:1px solid rgba(255,255,255,.12);
       background:rgba(255,255,255,.06);
     }
@@ -333,8 +358,8 @@
     }
 
     .stat .v{
-      margin-top:7px;
-      font-size:22px;
+      margin-top:5px;
+      font-size:18px;
       font-weight:950;
       line-height:1.1;
     }
@@ -343,13 +368,13 @@
 
     .miniStats{
       display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:8px;
+      grid-template-columns:repeat(3,1fr);
+      gap:7px;
     }
 
     .miniStat{
-      min-height:58px;
-      padding:9px;
+      min-height:52px;
+      padding:8px;
       border-radius:10px;
       background:rgba(2,6,23,.32);
       border:1px solid rgba(255,255,255,.10);
@@ -367,14 +392,14 @@
     .miniStat .v{
       margin-top:5px;
       color:#eef6ff;
-      font-size:18px;
+      font-size:16px;
       line-height:1.1;
       font-weight:950;
     }
 
     .metricRows{
       display:grid;
-      gap:7px;
+      gap:6px;
     }
 
     .metricRow{
@@ -382,7 +407,7 @@
       grid-template-columns:minmax(0,1fr) auto;
       gap:10px;
       align-items:baseline;
-      padding:8px 9px;
+      padding:7px 8px;
       border-radius:10px;
       background:rgba(2,6,23,.30);
       border:1px solid rgba(255,255,255,.09);
@@ -401,15 +426,15 @@
       grid-template-columns:1fr auto;
       gap:10px;
       align-items:end;
-      padding:10px;
-      margin-bottom:8px;
+      padding:9px;
+      margin-bottom:7px;
       border-radius:12px;
       background:linear-gradient(135deg,rgba(34,211,238,.16),rgba(251,113,133,.10));
       border:1px solid rgba(125,211,252,.26);
     }
 
     .pointHero .height{
-      font-size:31px;
+      font-size:26px;
       line-height:1;
       font-weight:950;
     }
@@ -429,7 +454,7 @@
 
     .legend{
       display:grid;
-      gap:7px;
+      gap:6px;
       color:#dbeafe;
       font-size:12px;
       font-weight:800;
@@ -458,13 +483,49 @@
 
     .chartTitle{
       margin:0;
-      font-size:15px;
+      font-size:14px;
       font-weight:950;
     }
 
     .chartWrap{
-      height:120px;
+      height:calc(100% - 34px);
+      min-height:190px;
       width:100%;
+    }
+
+    .tinyChartLabel{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin:8px 0 5px;
+      color:#eaf3ff;
+      font-size:12px;
+      font-weight:950;
+    }
+
+    .tinyChartWrap{
+      height:118px;
+      width:100%;
+    }
+
+    .floodCharts{
+      margin-bottom:0;
+    }
+
+    .floodSummary{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:6px;
+      margin-bottom:7px;
+    }
+
+    .floodSummary .miniStat{
+      min-height:48px;
+    }
+
+    .floodSummary .miniStat .v{
+      font-size:15px;
     }
 
     .leaflet-control-zoom{
@@ -535,6 +596,8 @@
         top:auto;
         bottom:auto;
         width:auto;
+        min-width:0;
+        height:auto;
         max-height:none;
         transform:none;
       }
@@ -543,8 +606,9 @@
         border-radius:18px;
       }
       h1{font-size:28px;white-space:normal}
-      .bottomPanel{min-height:220px}
-      .chartWrap{height:168px}
+      .bottomPanel{min-height:260px}
+      .chartWrap{height:216px;min-height:216px}
+      .tinyChartWrap{height:170px}
       .miniStats{grid-template-columns:1fr 1fr}
     }
   </style>
@@ -570,7 +634,6 @@
           <button id="sampleBtn" class="secondary">Reset line</button>
           <button id="exportBtn" class="secondary">Export CSV</button>
         </div>
-        <p class="sourceLine">Click map or profile to move the inspection dot.</p>
       </section>
 
       <section class="panelBlock">
@@ -595,14 +658,17 @@
       </section>
 
       <section class="panelBlock">
-        <div class="panelTitle">Map Layers <span class="pill">5 ft DEM</span></div>
+        <div class="panelTitle">Map <span class="pill">5 ft DEM</span></div>
+        <div class="basemapGrid" aria-label="Basemap">
+          <button data-basemap="current" class="active">Current</button>
+          <button data-basemap="satellite" class="secondary">Satellite</button>
+          <button data-basemap="osm" class="secondary">OSM</button>
+        </div>
         <div class="legend">
           <div class="legendRow"><span class="swatch" style="background:#38bdf8"></span> Section</div>
           <div class="legendRow"><span class="swatch" style="background:#fb7185"></span> Exposed reach</div>
           <div class="legendRow"><span class="swatch" style="background:#ef4444"></span> Borough</div>
-          <div class="legendRow"><span class="swatch" style="background:#64748b"></span> Hillshade</div>
         </div>
-        <p class="sourceLine" id="sourceText">Loading source...</p>
       </section>
     </aside>
 
@@ -624,43 +690,42 @@
           <div class="k">Exposed</div>
           <div class="v" id="riskLen">-</div>
         </div>
-        <div class="stat wide">
-          <div class="k">Longest continuous exposure</div>
-          <div class="v" id="riskSummary">Draw a section</div>
-        </div>
       </section>
 
       <section class="panelBlock">
-        <div class="panelTitle">Floodmapper Context <span class="pill" id="gaugePill">Gauge</span></div>
-        <div class="miniStats">
-          <div class="miniStat"><div class="k">Record tide</div><div class="v" id="recordTide">-</div></div>
-          <div class="miniStat"><div class="k">Minor days</div><div class="v" id="minorDays">-</div></div>
-          <div class="miniStat"><div class="k">High tides</div><div class="v" id="highTideCount">-</div></div>
-          <div class="miniStat"><div class="k">Trend</div><div class="v" id="trendRate">-</div></div>
-        </div>
-      </section>
-
-      <section class="panelBlock">
-        <div class="panelTitle">Inspect Dot <span class="pill" id="pointDistance">No point</span></div>
+        <div class="panelTitle">Point <span class="pill" id="pointDistance">No point</span></div>
         <div class="pointHero">
           <div>
-            <div class="k">Height of dot</div>
+            <div class="k">Height</div>
             <div class="height" id="pointElev">-</div>
           </div>
           <span class="tag" id="pointClass">-</span>
         </div>
         <div class="metricRows">
-          <div class="metricRow"><div class="k">Clearance vs threshold</div><div class="v" id="pointClearance">-</div></div>
-          <div class="metricRow"><div class="k">Recurrence interval</div><div class="v" id="pointReturn">-</div></div>
-          <div class="metricRow"><div class="k">Exceedances in archive</div><div class="v" id="pointExceedances">-</div></div>
-          <div class="metricRow"><div class="k">Uncertainty band</div><div class="v" id="pointUncertainty">-</div></div>
-          <div class="metricRow"><div class="k">MLLW equivalent</div><div class="v" id="pointMllw">-</div></div>
+          <div class="metricRow"><div class="k">Clearance</div><div class="v" id="pointClearance">-</div></div>
+          <div class="metricRow"><div class="k">Archive</div><div class="v" id="pointExceedances">-</div></div>
+          <div class="metricRow"><div class="k">Frequency</div><div class="v" id="pointReturn">-</div></div>
         </div>
-        <p class="sourceLine" id="pointAnalog">Click the line, profile, or dot.</p>
       </section>
 
-      <a class="fileLink" href="seaside_heights_dem_5ft_cog.tif" download>DEM COG</a>
-      <a class="fileLink" href="dem_metadata.json" download>Metadata</a>
+      <section class="panelBlock floodCharts">
+        <div class="panelTitle">Flood History <span class="pill" id="floodBucketPill">0.0 ft</span></div>
+        <div class="floodSummary">
+          <div class="miniStat"><div class="k">Record</div><div class="v" id="recordTide">-</div></div>
+          <div class="miniStat"><div class="k">Flooded</div><div class="v" id="floodArchiveTotal">-</div></div>
+          <div class="miniStat"><div class="k">Outlook</div><div class="v" id="floodOutlook">-</div></div>
+        </div>
+        <div class="tinyChartLabel">
+          <span>Flooding over the years</span>
+          <span class="pill" id="annualFloodMeta">Archive</span>
+        </div>
+        <div class="tinyChartWrap"><canvas id="dotAnnualChart"></canvas></div>
+        <div class="tinyChartLabel">
+          <span>Flooding throughout the year</span>
+          <span class="pill" id="doyFloodMeta">0 years</span>
+        </div>
+        <div class="tinyChartWrap"><canvas id="dotDoyChart"></canvas></div>
+      </section>
     </aside>
 
     <section class="bottomPanel">
@@ -697,16 +762,31 @@
       inspectMarker:null,
       profile:[],
       chart:null,
+      annualFloodChart:null,
+      doyFloodChart:null,
+      floodBucketCache:new Map(),
       selectedIndex:null,
       thresholdFt:2.55,
-      uncertaintyFt:.5
+      uncertaintyFt:.5,
+      activeBasemap:"current"
     };
 
     const map = L.map("map", { zoomControl:true, preferCanvas:true });
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-      maxZoom: 20,
-      attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
-    }).addTo(map);
+    const basemaps = {
+      current:L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+        maxZoom:20,
+        attribution:"&copy; OpenStreetMap contributors &copy; CARTO"
+      }),
+      satellite:L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+        maxZoom:20,
+        attribution:"Tiles &copy; Esri"
+      }),
+      osm:L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom:19,
+        attribution:"&copy; OpenStreetMap contributors"
+      })
+    };
+    basemaps.current.addTo(map);
 
     const boundaryLayer = L.geoJSON(null, {
       style:{
@@ -723,6 +803,7 @@
     const thresholdPlugin = {
       id:"riskThreshold",
       afterDatasetsDraw(chart){
+        if(chart?.canvas?.id !== "profileChart") return;
         const yScale = chart.scales.y;
         const xScale = chart.scales.x;
         if(!yScale || !xScale) return;
@@ -748,11 +829,28 @@
     Chart.register(thresholdPlugin);
 
     function $(id){ return document.getElementById(id); }
+    function setText(id, text){ const el = $(id); if(el) el.textContent = text; }
     function fmtFt(v, digits=1){ return Number.isFinite(v) ? `${v.toFixed(digits)} ft` : "-"; }
     function fmtLen(v){ return Number.isFinite(v) ? v >= 5280 ? `${(v/5280).toFixed(2)} mi` : `${Math.round(v)} ft` : "-"; }
     function fmtSigned(v, digits=1){ return Number.isFinite(v) ? `${v >= 0 ? "+" : ""}${v.toFixed(digits)} ft` : "-"; }
     function fmtCount(v){ return Number.isFinite(v) ? Math.round(v).toLocaleString() : "-"; }
     function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
+    function fmtFlood(v, digits=0){ return Number.isFinite(v) ? Number(v).toLocaleString(undefined, { maximumFractionDigits:digits }) : "-"; }
+
+    function setBasemap(id){
+      const next = basemaps[id] ? id : "current";
+      if(next === state.activeBasemap && map.hasLayer(basemaps[next])) return;
+      Object.entries(basemaps).forEach(([key, layer]) => {
+        if(key !== next && map.hasLayer(layer)) map.removeLayer(layer);
+      });
+      if(!map.hasLayer(basemaps[next])) basemaps[next].addTo(map);
+      state.activeBasemap = next;
+      document.querySelectorAll("[data-basemap]").forEach(button => {
+        const active = button.dataset.basemap === next;
+        button.classList.toggle("active", active);
+        button.classList.toggle("secondary", !active);
+      });
+    }
 
     function classifyStage(stageFt){
       const thresholds = state.floodStats?.thresholds?.navd88 || { minor:2.55, moderate:3.55, major:4.55 };
@@ -793,6 +891,188 @@
       }
       const nearest = topEvents.reduce((best, item) => Math.abs(item.heightNavd88Ft - stageFt) < Math.abs(best.heightNavd88Ft - stageFt) ? item : best, topEvents[0]);
       return `Nearest top event: #${nearest.rank}, ${nearest.displayDate}, ${nearest.heightNavd88Ft.toFixed(2)} ft NAVD88.`;
+    }
+
+    const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const MONTH_STARTS = [0,31,59,90,120,151,181,212,243,273,304,334];
+
+    function dateParts(dateText){
+      const match = String(dateText || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if(!match) return null;
+      return { year:Number(match[1]), month:Number(match[2]), day:Number(match[3]) };
+    }
+
+    function doyIndex(dateText){
+      const parts = dateParts(dateText);
+      if(!parts) return null;
+      if(parts.month === 2 && parts.day === 29) return 58;
+      const start = MONTH_STARTS[parts.month - 1];
+      if(start === undefined) return null;
+      const idx = start + parts.day - 1;
+      return idx >= 0 && idx < 365 ? idx : null;
+    }
+
+    function monthNameFromIndex(index){
+      return MONTH_NAMES[index] || "";
+    }
+
+    function snapStageBucket(stageFt){
+      if(!Number.isFinite(stageFt)) return null;
+      return Number((Math.round(stageFt * 10) / 10).toFixed(1));
+    }
+
+    function dailyArchive(){
+      const rows = state.floodStats?.dailyPeakArchive;
+      if(!Array.isArray(rows)) return [];
+      return rows
+        .map(row => ({
+          date:String(row.date || "").slice(0, 10),
+          peakFt:Number(row.peakNavd88Ft)
+        }))
+        .filter(row => /^\d{4}-\d{2}-\d{2}$/.test(row.date) && Number.isFinite(row.peakFt));
+    }
+
+    function archiveYearRange(records){
+      const years = records
+        .map(row => dateParts(row.date)?.year)
+        .filter(Number.isFinite);
+      if(!years.length) return [];
+      const min = Math.min(...years);
+      const max = Math.max(...years);
+      return Array.from({length:max - min + 1}, (_, i) => min + i);
+    }
+
+    function binomialRange(draws, probability){
+      const n = Math.max(0, Math.round(Number(draws) || 0));
+      const p = clamp(Number(probability) || 0, 0, 1);
+      if(n <= 0 || p <= 0) return { mean:0, low:0, high:0 };
+      if(p >= 1) return { mean:n, low:n, high:n };
+      const mean = n * p;
+      const sd = Math.sqrt(n * p * (1 - p));
+      return {
+        mean,
+        low:Math.max(0, mean - 1.6448536269514722 * sd),
+        high:Math.min(n, mean + 1.6448536269514722 * sd)
+      };
+    }
+
+    function projectionForThreshold(thresholdFt, year){
+      const records = dailyArchive();
+      const peaks = state.floodStats?.dailyPeakNavd88Ft || [];
+      if(!records.length || !peaks.length || !Number.isFinite(thresholdFt)) return null;
+      const baseYear = Number(String(state.floodStats?.archive?.endDate || "").slice(0, 4)) || new Date().getFullYear();
+      const trend = Number(state.floodStats?.tideModel?.trendFtPerYear) || 0;
+      const effectiveThreshold = thresholdFt - trend * (Number(year) - baseYear);
+      const probability = countDailyExceedances(effectiveThreshold) / peaks.length;
+      const range = binomialRange(365.2425, probability);
+      return {
+        year:Number(year),
+        effectiveThreshold,
+        probability,
+        mean:range.mean,
+        low:range.low,
+        high:range.high
+      };
+    }
+
+    function cumulativeSeriesFromDaily(daily){
+      const out = new Array(365).fill(0);
+      let run = 0;
+      for(let i=0; i<365; i++){
+        run += Number(daily[i]) || 0;
+        out[i] = run;
+      }
+      return out;
+    }
+
+    function buildBucketStats(thresholdFt){
+      const threshold = snapStageBucket(thresholdFt);
+      if(threshold === null) return null;
+      const key = threshold.toFixed(1);
+      if(state.floodBucketCache.has(key)) return state.floodBucketCache.get(key);
+
+      const records = dailyArchive();
+      const years = archiveYearRange(records);
+      if(!records.length || !years.length) return null;
+
+      const annualMap = new Map(years.map(year => [year, 0]));
+      const dailyByYear = new Map(years.map(year => [year, new Array(365).fill(0)]));
+
+      for(const row of records){
+        const parts = dateParts(row.date);
+        const idx = doyIndex(row.date);
+        if(!parts || idx === null) continue;
+        if(row.peakFt >= threshold){
+          annualMap.set(parts.year, (annualMap.get(parts.year) || 0) + 1);
+          const daily = dailyByYear.get(parts.year);
+          if(daily) daily[idx] += 1;
+        }
+      }
+
+      const firstYear = years[0];
+      const lastYear = years[years.length - 1];
+      const completeYears = years.filter(year => year > firstYear && year < lastYear);
+      const statsYears = completeYears.length ? completeYears : years;
+      const cumulativeByYear = years.map(year => ({
+        year,
+        cumulative:cumulativeSeriesFromDaily(dailyByYear.get(year) || new Array(365).fill(0))
+      }));
+
+      const avg = new Array(365).fill(0);
+      const min = new Array(365).fill(0);
+      const max = new Array(365).fill(0);
+      for(let i=0; i<365; i++){
+        const values = statsYears.map(year => {
+          const row = cumulativeByYear.find(item => item.year === year);
+          return row ? row.cumulative[i] : 0;
+        });
+        const sum = values.reduce((acc, value) => acc + value, 0);
+        avg[i] = values.length ? sum / values.length : 0;
+        min[i] = values.length ? Math.min(...values) : 0;
+        max[i] = values.length ? Math.max(...values) : 0;
+      }
+
+      const endIdx = doyIndex(state.floodStats?.archive?.endDate) ?? 364;
+      const current = (cumulativeByYear.find(item => item.year === lastYear)?.cumulative || new Array(365).fill(0))
+        .map((value, i) => i <= endIdx ? value : null);
+
+      const currentProjection = projectionForThreshold(threshold, lastYear);
+      const forecastMean = new Array(365).fill(null);
+      const forecastLow = new Array(365).fill(null);
+      const forecastHigh = new Array(365).fill(null);
+      for(let i=0; i<365; i++){
+        const ratio = avg[364] > 0 ? avg[i] / avg[364] : (i + 1) / 365;
+        forecastMean[i] = currentProjection ? currentProjection.mean * ratio : 0;
+        forecastLow[i] = currentProjection ? currentProjection.low * ratio : 0;
+        forecastHigh[i] = currentProjection ? currentProjection.high * ratio : 0;
+      }
+
+      const annualRows = years.map(year => ({ year, count:annualMap.get(year) || 0 }));
+      const futureYears = Array.from({length:2100 - lastYear}, (_, i) => lastYear + i + 1);
+      const future = futureYears.map(year => projectionForThreshold(threshold, year)).filter(Boolean);
+
+      const stats = {
+        threshold,
+        records,
+        years,
+        firstYear,
+        lastYear,
+        statsYears,
+        annualRows,
+        cumulativeByYear,
+        avg,
+        min,
+        max,
+        current,
+        currentProjection,
+        forecastMean,
+        forecastLow,
+        forecastHigh,
+        future,
+        total:annualRows.reduce((sum, row) => sum + row.count, 0)
+      };
+      state.floodBucketCache.set(key, stats);
+      return stats;
     }
 
     function setReady(ok, text){
@@ -864,11 +1144,11 @@
       const valid = profile.filter(p => Number.isFinite(p.elevationFt));
       $("sampleCountPill").textContent = `${valid.length} samples`;
       if(!valid.length){
-        $("minElev").textContent = "-";
-        $("exposedPct").textContent = "-";
-        $("profileLen").textContent = "-";
-        $("riskLen").textContent = "-";
-        $("riskSummary").textContent = "No DEM samples";
+        setText("minElev", "-");
+        setText("exposedPct", "-");
+        setText("profileLen", "-");
+        setText("riskLen", "-");
+        setText("riskSummary", "No DEM samples");
         return;
       }
       const min = valid.reduce((a,b) => b.elevationFt < a.elevationFt ? b : a, valid[0]);
@@ -887,13 +1167,11 @@
         }
       }
 
-      $("minElev").textContent = fmtFt(min.elevationFt, 1);
-      $("exposedPct").textContent = `${Math.round((riskLen / Math.max(len, 1)) * 100)}%`;
-      $("profileLen").textContent = fmtLen(len);
-      $("riskLen").textContent = fmtLen(riskLen);
-      $("riskSummary").textContent = riskLen > 0
-        ? fmtLen(longestRun)
-        : "None";
+      setText("minElev", fmtFt(min.elevationFt, 1));
+      setText("exposedPct", `${Math.round((riskLen / Math.max(len, 1)) * 100)}%`);
+      setText("profileLen", fmtLen(len));
+      setText("riskLen", fmtLen(riskLen));
+      setText("riskSummary", riskLen > 0 ? fmtLen(longestRun) : "None");
     }
 
     function riskSegments(profile){
@@ -1008,6 +1286,307 @@
       });
     }
 
+    function renderAnnualFloodChart(bucketStats){
+      const canvas = $("dotAnnualChart");
+      if(!canvas) return;
+      const labels = bucketStats
+        ? [
+            ...bucketStats.annualRows.map(row => row.year),
+            ...bucketStats.future.map(row => row.year)
+          ]
+        : [];
+      const historicalLength = bucketStats?.annualRows?.length || 0;
+      const observed = bucketStats ? [
+        ...bucketStats.annualRows.map(row => row.count),
+        ...bucketStats.future.map(() => null)
+      ] : [];
+      const low = bucketStats ? [
+        ...bucketStats.annualRows.map(() => null),
+        ...bucketStats.future.map(row => row.low)
+      ] : [];
+      const high = bucketStats ? [
+        ...bucketStats.annualRows.map(() => null),
+        ...bucketStats.future.map(row => row.high)
+      ] : [];
+      const mean = bucketStats ? [
+        ...bucketStats.annualRows.map(() => null),
+        ...bucketStats.future.map(row => row.mean)
+      ] : [];
+
+      const config = {
+        type:"bar",
+        data:{
+          labels,
+          datasets:[
+            {
+              type:"bar",
+              label:"Observed",
+              data:observed,
+              backgroundColor:"rgba(34,211,238,.72)",
+              borderColor:"rgba(125,211,252,.96)",
+              borderWidth:1,
+              order:20
+            },
+            {
+              type:"line",
+              label:"Forecast low",
+              data:low,
+              borderWidth:0,
+              pointRadius:0,
+              backgroundColor:"rgba(251,191,36,0)",
+              borderColor:"rgba(251,191,36,0)",
+              fill:false,
+              order:12
+            },
+            {
+              type:"line",
+              label:"Forecast range",
+              data:high,
+              borderWidth:0,
+              pointRadius:0,
+              backgroundColor:"rgba(251,191,36,.16)",
+              borderColor:"rgba(251,191,36,0)",
+              fill:"-1",
+              order:11
+            },
+            {
+              type:"line",
+              label:"Projection",
+              data:mean,
+              borderColor:"rgba(251,191,36,.96)",
+              backgroundColor:"rgba(251,191,36,.96)",
+              borderDash:[7,5],
+              borderWidth:2,
+              pointRadius:0,
+              pointHitRadius:8,
+              tension:.2,
+              fill:false,
+              order:10
+            }
+          ]
+        },
+        options:{
+          responsive:true,
+          maintainAspectRatio:false,
+          animation:false,
+          interaction:{mode:"index", intersect:false},
+          plugins:{
+            legend:{
+              display:false
+            },
+            tooltip:{
+              callbacks:{
+                label(ctx){
+                  const v = ctx.parsed?.y;
+                  if(!Number.isFinite(v)) return null;
+                  if(ctx.dataset.label === "Forecast low") return null;
+                  if(ctx.dataset.label === "Forecast range"){
+                    const lowValue = low[ctx.dataIndex];
+                    return Number.isFinite(lowValue)
+                      ? `Range: ${fmtFlood(lowValue, 0)} - ${fmtFlood(v, 0)} flood days`
+                      : null;
+                  }
+                  return `${ctx.dataset.label}: ${fmtFlood(v, ctx.dataIndex >= historicalLength ? 1 : 0)} flood days`;
+                }
+              }
+            }
+          },
+          scales:{
+            x:{
+              ticks:{ color:"#9fb0d1", maxRotation:0, autoSkip:true, maxTicksLimit:6 },
+              grid:{ display:false }
+            },
+            y:{
+              beginAtZero:true,
+              ticks:{ color:"#9fb0d1", precision:0, maxTicksLimit:4 },
+              grid:{ color:"rgba(148,163,184,.12)" }
+            }
+          }
+        }
+      };
+
+      if(state.annualFloodChart){
+        state.annualFloodChart.data = config.data;
+        state.annualFloodChart.options = config.options;
+        state.annualFloodChart.update("none");
+      }else{
+        state.annualFloodChart = new Chart(canvas, config);
+      }
+    }
+
+    function renderDoyFloodChart(bucketStats){
+      const canvas = $("dotDoyChart");
+      if(!canvas) return;
+      const labels = Array.from({length:365}, (_, i) => i + 1);
+      const data = {
+        labels,
+        datasets:[
+          {
+            label:"Range floor",
+            data:bucketStats?.min || [],
+            borderWidth:0,
+            pointRadius:0,
+            backgroundColor:"rgba(148,163,184,0)",
+            borderColor:"rgba(148,163,184,0)",
+            fill:false,
+            order:40
+          },
+          {
+            label:"Historic range",
+            data:bucketStats?.max || [],
+            borderWidth:0,
+            pointRadius:0,
+            backgroundColor:"rgba(148,163,184,.18)",
+            borderColor:"rgba(148,163,184,0)",
+            fill:"-1",
+            order:39
+          },
+          {
+            label:"Average",
+            data:bucketStats?.avg || [],
+            borderColor:"rgba(255,255,255,.90)",
+            backgroundColor:"rgba(255,255,255,.90)",
+            borderWidth:2,
+            pointRadius:0,
+            pointHitRadius:8,
+            tension:.22,
+            order:30
+          },
+          {
+            label:"Current",
+            data:bucketStats?.current || [],
+            borderColor:"rgba(251,113,133,.95)",
+            backgroundColor:"rgba(251,113,133,.95)",
+            borderWidth:2.8,
+            pointRadius:0,
+            pointHitRadius:8,
+            stepped:"after",
+            tension:0,
+            order:20
+          },
+          {
+            label:"Forecast low",
+            data:bucketStats?.forecastLow || [],
+            borderWidth:0,
+            pointRadius:0,
+            backgroundColor:"rgba(251,191,36,0)",
+            borderColor:"rgba(251,191,36,0)",
+            fill:false,
+            order:18
+          },
+          {
+            label:"Forecast range",
+            data:bucketStats?.forecastHigh || [],
+            borderWidth:0,
+            pointRadius:0,
+            backgroundColor:"rgba(251,191,36,.14)",
+            borderColor:"rgba(251,191,36,0)",
+            fill:"-1",
+            order:17
+          },
+          {
+            label:"Projection",
+            data:bucketStats?.forecastMean || [],
+            borderColor:"rgba(251,191,36,.96)",
+            backgroundColor:"rgba(251,191,36,.96)",
+            borderDash:[7,5],
+            borderWidth:2,
+            pointRadius:0,
+            pointHitRadius:8,
+            tension:.22,
+            order:16
+          }
+        ]
+      };
+      const options = {
+        responsive:true,
+        maintainAspectRatio:false,
+        animation:false,
+        interaction:{mode:"index", intersect:false},
+        plugins:{
+          legend:{ display:false },
+          tooltip:{
+            callbacks:{
+              title(items){
+                const idx = Number(items?.[0]?.label) - 1;
+                let monthIndex = 0;
+                for(let i=0; i<MONTH_STARTS.length; i++){
+                  if(idx >= MONTH_STARTS[i]) monthIndex = i;
+                }
+                const day = idx - MONTH_STARTS[monthIndex] + 1;
+                return `${monthNameFromIndex(monthIndex)} ${day}`;
+              },
+              label(ctx){
+                const v = ctx.parsed?.y;
+                if(!Number.isFinite(v)) return null;
+                if(ctx.dataset.label === "Range floor" || ctx.dataset.label === "Forecast low") return null;
+                if(ctx.dataset.label === "Historic range"){
+                  const low = bucketStats?.min?.[ctx.dataIndex];
+                  return Number.isFinite(low) ? `Historic range: ${fmtFlood(low, 0)} - ${fmtFlood(v, 0)}` : null;
+                }
+                if(ctx.dataset.label === "Forecast range"){
+                  const low = bucketStats?.forecastLow?.[ctx.dataIndex];
+                  return Number.isFinite(low) ? `Forecast range: ${fmtFlood(low, 0)} - ${fmtFlood(v, 0)}` : null;
+                }
+                return `${ctx.dataset.label}: ${fmtFlood(v, 1)} flood days`;
+              }
+            }
+          }
+        },
+        scales:{
+          x:{
+            ticks:{
+              color:"#9fb0d1",
+              maxRotation:0,
+              autoSkip:false,
+              callback(value){
+                const day = Number(value);
+                const month = MONTH_STARTS.indexOf(day - 1);
+                return month >= 0 ? MONTH_NAMES[month] : "";
+              }
+            },
+            grid:{ display:false }
+          },
+          y:{
+            beginAtZero:true,
+            ticks:{ color:"#9fb0d1", precision:0, maxTicksLimit:4 },
+            grid:{ color:"rgba(148,163,184,.12)" }
+          }
+        }
+      };
+
+      if(state.doyFloodChart){
+        state.doyFloodChart.data = data;
+        state.doyFloodChart.options = options;
+        state.doyFloodChart.update("none");
+      }else{
+        state.doyFloodChart = new Chart(canvas, { type:"line", data, options });
+      }
+    }
+
+    function renderPointFloodProduct(stageFt){
+      const bucketStats = buildBucketStats(stageFt);
+      if(!bucketStats){
+        setText("floodBucketPill", "No point");
+        setText("floodArchiveTotal", "-");
+        setText("floodOutlook", "-");
+        setText("annualFloodMeta", "Archive");
+        setText("doyFloodMeta", "0 years");
+        renderAnnualFloodChart(null);
+        renderDoyFloodChart(null);
+        return null;
+      }
+
+      setText("floodBucketPill", `${bucketStats.threshold.toFixed(1)} ft`);
+      setText("floodArchiveTotal", fmtFlood(bucketStats.total, 0));
+      setText("floodOutlook", bucketStats.currentProjection ? fmtFlood(bucketStats.currentProjection.mean, 1) : "-");
+      setText("annualFloodMeta", `${bucketStats.firstYear}-${bucketStats.lastYear}`);
+      setText("doyFloodMeta", `${bucketStats.statsYears.length} yrs`);
+      renderAnnualFloodChart(bucketStats);
+      renderDoyFloodChart(bucketStats);
+      return bucketStats;
+    }
+
     function inspectIcon(){
       return L.divIcon({
         className:"",
@@ -1022,17 +1601,19 @@
       const mllwOffset = state.floodStats?.datum?.mllwOffsetFromNavd88Ft ?? .45;
       const uncertainty = state.uncertaintyFt;
       const stageClass = classifyStage(point.elevationFt);
-      const exceedances = countDailyExceedances(point.elevationFt);
+      const bucketStageFt = snapStageBucket(point.elevationFt);
+      const exceedances = Number.isFinite(bucketStageFt) ? countDailyExceedances(bucketStageFt) : countDailyExceedances(point.elevationFt);
       const clearance = point.elevationFt - state.thresholdFt;
       return {
         elevationFt:point.elevationFt,
+        bucketStageFt,
         mllwFt:point.elevationFt + mllwOffset,
         clearance,
         uncertainty,
         stageClass,
         exceedances,
-        recurrence:recurrenceText(point.elevationFt),
-        analog:topEventText(point.elevationFt),
+        recurrence:recurrenceText(bucketStageFt ?? point.elevationFt),
+        analog:topEventText(bucketStageFt ?? point.elevationFt),
         risk:clearance <= -uncertainty ? "Below threshold"
           : clearance <= uncertainty ? "Within uncertainty"
           : "Above threshold"
@@ -1058,15 +1639,13 @@
         map.removeLayer(state.inspectMarker);
         state.inspectMarker = null;
       }
-      $("pointDistance").textContent = "No point";
-      $("pointElev").textContent = "-";
-      $("pointClass").textContent = "-";
-      $("pointClearance").textContent = "-";
-      $("pointReturn").textContent = "-";
-      $("pointExceedances").textContent = "-";
-      $("pointUncertainty").textContent = "-";
-      $("pointMllw").textContent = "-";
-      $("pointAnalog").textContent = "Click the line, profile, or dot.";
+      setText("pointDistance", "No point");
+      setText("pointElev", "-");
+      setText("pointClass", "-");
+      setText("pointClearance", "-");
+      setText("pointReturn", "-");
+      setText("pointExceedances", "-");
+      renderPointFloodProduct(null);
     }
 
     function updateInspection(openPopup=false){
@@ -1076,16 +1655,15 @@
         resetInspection();
         return;
       }
-      $("pointDistance").textContent = fmtLen(point.distanceFt);
-      $("pointElev").textContent = fmtFt(stats.elevationFt, 1);
-      $("pointClass").textContent = stats.stageClass.label;
+      const bucketStats = renderPointFloodProduct(stats.bucketStageFt);
+      setText("pointDistance", fmtLen(point.distanceFt));
+      setText("pointElev", fmtFt(stats.elevationFt, 1));
+      setText("pointClass", stats.stageClass.label);
       $("pointClass").style.background = stats.stageClass.color;
-      $("pointClearance").textContent = fmtSigned(stats.clearance, 2);
-      $("pointReturn").textContent = stats.recurrence;
-      $("pointExceedances").textContent = `${fmtCount(stats.exceedances)} days`;
-      $("pointUncertainty").textContent = `${fmtFt(stats.elevationFt - stats.uncertainty, 1)} - ${fmtFt(stats.elevationFt + stats.uncertainty, 1)}`;
-      $("pointMllw").textContent = fmtFt(stats.mllwFt, 2);
-      $("pointAnalog").textContent = stats.analog;
+      setText("pointClearance", fmtSigned(stats.clearance, 2));
+      setText("pointReturn", stats.recurrence);
+      setText("pointExceedances", `${fmtCount(stats.exceedances)} days`);
+      if(bucketStats?.currentProjection) setText("floodOutlook", fmtFlood(bucketStats.currentProjection.mean, 1));
 
       const latLng = L.latLng(point.lat, point.lng);
       if(!state.inspectMarker){
@@ -1252,11 +1830,11 @@
       const stats = state.floodStats;
       if(!stats) return;
       const record = stats.topEvents?.[0];
-      $("gaugePill").textContent = stats.gaugeName;
-      $("recordTide").textContent = record ? `${record.heightNavd88Ft.toFixed(2)} ft` : "-";
-      $("minorDays").textContent = `${fmtCount(stats.archive.classificationCounts.minor)} days`;
-      $("highTideCount").textContent = fmtCount(stats.tideModel.highTideCount);
-      $("trendRate").textContent = `${(stats.tideModel.trendFtPerYear * 100).toFixed(1)} ft/cent`;
+      setText("gaugePill", stats.gaugeName);
+      setText("recordTide", record ? `${record.heightNavd88Ft.toFixed(2)} ft` : "-");
+      setText("minorDays", `${fmtCount(stats.archive.classificationCounts.minor)} days`);
+      setText("highTideCount", fmtCount(stats.tideModel.highTideCount));
+      setText("trendRate", `${(stats.tideModel.trendFtPerYear * 100).toFixed(1)} ft/cent`);
       $("uncertaintyNumber").value = (stats.verticalUncertaintyFt || state.uncertaintyFt).toFixed(2);
       state.uncertaintyFt = Number($("uncertaintyNumber").value);
     }
@@ -1302,8 +1880,6 @@
         interactive:false
       }).addTo(hillshadeLayerGroup);
 
-      $("sourceText").textContent = `USGS 3DEP | ${metadata.pixelSizeFeet.toFixed(0)} ft grid | ${floodStats.gaugeName} gauge`;
-
       const demResponse = await fetch(DEM_URL);
       if(!demResponse.ok) throw new Error(`DEM request failed: ${demResponse.status}`);
       const tiff = await GeoTIFF.fromArrayBuffer(await demResponse.arrayBuffer());
@@ -1333,6 +1909,9 @@
     document.querySelectorAll("[data-threshold-preset]").forEach(button => {
       button.addEventListener("click", () => setThreshold(button.dataset.thresholdPreset));
     });
+    document.querySelectorAll("[data-basemap]").forEach(button => {
+      button.addEventListener("click", () => setBasemap(button.dataset.basemap));
+    });
 
     map.on("click", event => {
       if(!state.drawMode){
@@ -1358,7 +1937,6 @@
       console.error(err);
       setReady(false, "DEM failed");
       $("chartStatus").textContent = "DEM failed to load";
-      $("sourceText").textContent = err?.message || "Could not load DEM.";
     });
   </script>
 </body>
