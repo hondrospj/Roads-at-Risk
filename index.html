@@ -38,7 +38,7 @@
       --ok:#34d399;
       --ink:#07111f;
       --shadow:0 10px 26px rgba(5,10,20,.28);
-      --right-rail:320px;
+      --right-rail:448px;
       --ui-gap:16px;
       --cross-section-h:clamp(292px, 30vh, 340px);
     }
@@ -797,9 +797,9 @@
     }
 
     :root{
-      --right-rail:clamp(350px, 25vw, 440px);
+      --right-rail:clamp(490px, 35vw, 616px);
       --ui-gap:16px;
-      --map-control-h:88px;
+      --map-control-h:72px;
       --map-tilt:54deg;
       --panel-radius:10px;
     }
@@ -807,22 +807,6 @@
     #map{
       transition:transform .28s ease, inset .28s ease, filter .28s ease;
       transform-origin:50% 34%;
-    }
-
-    body.view-3d #map{
-      inset:-19vh -9vw -8vh -9vw;
-      filter:saturate(1.08) contrast(1.06);
-      transform:perspective(1200px) rotateX(var(--map-tilt)) scale(1.3);
-      box-shadow:0 36px 90px rgba(0,0,0,.55);
-    }
-
-    body.view-3d #map::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      pointer-events:none;
-      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(2,6,23,.16) 58%, rgba(2,6,23,.44));
-      z-index:650;
     }
 
     .titleBar{
@@ -886,37 +870,12 @@
       gap:6px;
     }
 
-    .mapModes button,
-    .view3dBtn{
+    .mapModes button{
       min-height:32px;
       padding:6px 5px;
       border-radius:9px;
       font-size:10px;
       line-height:1.05;
-    }
-
-    .view3dBtn.active{
-      background:#a7f3d0;
-      border-color:#bbf7d0;
-      color:#052e1f;
-    }
-
-    .tiltRow{
-      display:grid;
-      grid-template-columns:auto minmax(0,1fr) auto;
-      align-items:center;
-      gap:8px;
-      height:0;
-      overflow:hidden;
-      color:#b9c8e4;
-      font-size:10px;
-      font-weight:950;
-      transition:height .2s ease, margin-top .2s ease;
-    }
-
-    body.view-3d .tiltRow{
-      height:26px;
-      margin-top:6px;
     }
 
     .rightStack{
@@ -927,13 +886,9 @@
       bottom:var(--ui-gap);
       width:var(--right-rail);
       display:grid;
-      grid-template-rows:minmax(300px, 2fr) minmax(152px, 1fr) minmax(112px, .55fr);
+      grid-template-rows:minmax(320px, 1.72fr) minmax(230px, 1.12fr) minmax(88px, .36fr);
       gap:10px;
       z-index:520;
-    }
-
-    body.view-3d .rightStack{
-      top:calc(var(--ui-gap) + var(--map-control-h) + 42px);
     }
 
     .toolPane{
@@ -963,6 +918,21 @@
       font-weight:950;
       color:#f4f8ff;
       white-space:nowrap;
+    }
+
+    .titleDatumToggle{
+      display:inline-grid;
+      grid-template-columns:1fr 1fr;
+      gap:3px;
+      width:142px;
+      margin-left:2px;
+    }
+
+    .titleDatumToggle button{
+      min-height:26px;
+      padding:4px 6px;
+      border-radius:8px;
+      font-size:10px;
     }
 
     .paneActions{
@@ -1005,7 +975,7 @@
 
     .compactStats{
       grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:6px;
+      gap:7px;
     }
 
     .compactStats .stat{
@@ -1051,6 +1021,17 @@
 
     .thresholdCompact button{
       border-radius:9px;
+      display:grid;
+      gap:2px;
+      align-content:center;
+    }
+
+    .thresholdCompact button small{
+      color:inherit;
+      opacity:.82;
+      font-size:9px;
+      font-weight:950;
+      line-height:1;
     }
 
     .chartHeader{
@@ -1065,7 +1046,7 @@
     .chartWrap{
       position:relative;
       flex:1 1 auto;
-      min-height:130px;
+      min-height:170px;
       height:auto;
     }
 
@@ -1094,8 +1075,7 @@
     }
 
     .floodSummary{
-      gap:6px;
-      margin-bottom:5px;
+      display:none;
     }
 
     .floodSummary .miniStat{
@@ -1110,20 +1090,22 @@
     }
 
     .tinyChartWrap{
-      flex:1 1 48px;
-      min-height:42px;
+      flex:1 1 96px;
+      min-height:92px;
       height:auto;
     }
 
     .seasonLabel,
     .seasonChartWrap{
-      display:none;
+      display:flex;
+    }
+
+    .seasonChartWrap{
+      display:block;
     }
 
     .modelNote{
-      min-height:12px;
-      margin:3px 0 0;
-      font-size:9px;
+      display:none;
     }
 
     .exportPane{
@@ -1287,13 +1269,14 @@
 
     .shell.paneExpanded .toolPane.isExpanded{
       display:flex;
-      padding:20px;
-      gap:14px;
+      padding:18px;
+      gap:12px;
       border-radius:12px;
+      overflow:auto;
     }
 
     .shell.paneExpanded .crossSectionPane .chartWrap{
-      min-height:52vh;
+      min-height:56vh;
     }
 
     .shell.paneExpanded .toolTitleRow{
@@ -1350,11 +1333,7 @@
       font-size:clamp(24px, 2.1vw, 34px);
     }
 
-    .shell.paneExpanded .crossSectionPane .pointStrip{
-      display:grid;
-      grid-template-columns:minmax(0, .8fr) minmax(0, 1.2fr);
-      gap:14px;
-    }
+    .shell.paneExpanded .crossSectionPane .pointStrip{display:none}
 
     .shell.paneExpanded .pointHero{
       min-height:118px;
@@ -1422,7 +1401,7 @@
     }
 
     .shell.paneExpanded .floodHistoryPane .tinyChartWrap{
-      min-height:260px;
+      min-height:300px;
     }
 
     .shell.paneExpanded .floodHistoryPane .annualChartWrap,
@@ -1432,11 +1411,6 @@
 
     .shell.paneExpanded .scenarioRow{
       gap:10px;
-      margin-bottom:14px;
-    }
-
-    .shell.paneExpanded .floodSummary{
-      gap:12px;
       margin-bottom:14px;
     }
 
@@ -1501,28 +1475,19 @@
 
     @media (max-height: 760px) and (min-width: 981px){
       .mapControl{padding:8px}
-      .rightStack{grid-template-rows:minmax(270px, 2fr) minmax(134px, 1fr) minmax(96px, .50fr)}
-      .compactStats .stat:nth-child(n+4){display:none}
       .pointStrip{display:none}
       .metricRows{grid-template-columns:1fr 1fr}
       .thresholdCompact{margin-top:6px}
-      .thresholdInputRow{display:none}
-      .floodHistoryPane .scenarioRow{display:none}
       .floodHistoryPane .toolTitleRow{margin-bottom:6px}
-      .floodSummary{margin-bottom:4px}
-      .floodSummary .miniStat{min-height:32px;padding:5px 6px}
-      .floodSummary .miniStat .v{font-size:12px}
       .floodHistoryPane .tinyChartLabel{margin:2px 0}
-      .seasonLabel,
-      .seasonChartWrap,
       .modelNote,
       .lineUtility,
       .exportStatus{display:none}
-      .shell.paneExpanded .crossSectionPane .pointStrip,
       .shell.paneExpanded .exportPane .lineUtility{display:grid}
       .shell.paneExpanded .floodHistoryPane .seasonLabel{display:flex}
       .shell.paneExpanded .floodHistoryPane .seasonChartWrap{display:block}
-      .annualChartWrap{flex:0 0 32px;min-height:32px}
+      .annualChartWrap,
+      .seasonChartWrap{flex:1 1 70px;min-height:70px}
       .exportPane{padding:8px}
       .exportColumn{gap:5px}
       .exportColumnTitle{font-size:11px}
@@ -1636,7 +1601,6 @@
     <section class="panelBlock mapControl" aria-label="Map view controls">
       <div class="mapControlHeader">
         <span>Map View</span>
-        <button id="view3dBtn" class="view3dBtn secondary" type="button">3D View</button>
       </div>
       <div class="mapModes" aria-label="Basemap">
         <button data-basemap="current" class="active" type="button">Light</button>
@@ -1645,17 +1609,18 @@
         <button data-basemap="osm" class="secondary" type="button">Streets</button>
         <button data-basemap="dark" class="secondary" type="button">Dark</button>
       </div>
-      <div class="tiltRow" aria-label="3D pitch">
-        <span>Low</span>
-        <input id="tiltRange" type="range" min="34" max="64" value="54" step="1" />
-        <span>High</span>
-      </div>
     </section>
 
     <aside class="rightStack" aria-label="Roads at Risk tools">
       <section class="toolPane crossSectionPane" id="crossSectionPane">
         <div class="toolTitleRow">
-          <div class="toolTitle">Cross Section <span class="pill" id="sampleCountPill">0 samples</span></div>
+          <div class="toolTitle">
+            Cross Section
+            <span class="titleDatumToggle" aria-label="Elevation datum">
+              <button data-datum="navd88" class="active" type="button">NAVD88</button>
+              <button data-datum="mllw" class="secondary" type="button">MLLW</button>
+            </span>
+          </div>
           <div class="paneActions">
             <button id="drawBtn" class="drawAction" type="button">Draw section</button>
             <button class="expandBtn secondary" type="button" data-expand-pane="crossSectionPane" aria-label="Expand cross section" title="Expand cross section">+</button>
@@ -1676,18 +1641,6 @@
               <div class="k">Length</div>
               <div class="v" id="profileLen">-</div>
             </div>
-            <div class="stat">
-              <div class="k">Exposed</div>
-              <div class="v" id="riskLen">-</div>
-            </div>
-            <div class="stat">
-              <div class="k">Longest run</div>
-              <div class="v" id="riskSummary">-</div>
-            </div>
-            <div class="stat">
-              <div class="k">Point</div>
-              <div class="v" id="pointDistance">No point</div>
-            </div>
           </section>
 
           <section class="pointStrip" aria-label="Selected point">
@@ -1707,14 +1660,13 @@
         </div>
 
         <div class="thresholdCompact" aria-label="Water threshold">
-          <button class="minor" data-threshold-preset="2.55" type="button">Minor</button>
-          <button class="moderate" data-threshold-preset="3.55" type="button">Moderate</button>
-          <button class="major" data-threshold-preset="4.55" type="button">Major</button>
+          <button class="minor" data-threshold-level="minor" type="button">Minor</button>
+          <button class="moderate" data-threshold-level="moderate" type="button">Moderate</button>
+          <button class="major" data-threshold-level="major" type="button">Major</button>
           <div class="thresholdInputRow">
             <input id="thresholdNumber" type="number" min="-2" max="14" value="2.55" step="0.05" aria-label="Custom stage in feet NAVD88" />
             <button id="applyThresholdBtn" class="secondary" type="button">Apply</button>
           </div>
-          <input id="threshold" type="range" min="-2" max="14" value="2.55" step="0.05" aria-label="Water threshold in feet NAVD88" />
           <div class="uncertaintyInline">
             <span>+/-</span>
             <input id="uncertaintyNumber" type="number" min="0" max="3" value="0.50" step="0.05" aria-label="Vertical uncertainty in feet" />
@@ -1726,7 +1678,6 @@
             <h2 class="chartTitle">Cross Section</h2>
             <div class="chartPills">
               <span class="pill" id="thresholdPill">2.55 ft</span>
-              <span class="pill" id="chartStatus">Waiting for a line</span>
             </div>
           </div>
           <div class="chartWrap"><canvas id="profileChart"></canvas></div>
@@ -1745,19 +1696,12 @@
             <button data-scenario="intermediate" class="active" type="button">Intermediate</button>
             <button data-scenario="high" class="secondary" type="button">High</button>
           </div>
-          <div class="floodSummary">
-            <div class="miniStat"><div class="k">Record</div><div class="v" id="recordTide">-</div></div>
-            <div class="miniStat"><div class="k">Flooded</div><div class="v" id="floodArchiveTotal">-</div></div>
-            <div class="miniStat"><div class="k">2100</div><div class="v" id="floodOutlook">-</div></div>
-          </div>
           <div class="tinyChartLabel annualLabel">
             <span>Flood days by year</span>
-            <span class="pill" id="annualFloodMeta">Archive</span>
           </div>
           <div class="tinyChartWrap annualChartWrap"><canvas id="dotAnnualChart"></canvas></div>
           <div class="tinyChartLabel seasonLabel">
             <span>Seasonal pattern</span>
-            <span class="pill" id="doyFloodMeta">0 years</span>
           </div>
           <div class="tinyChartWrap seasonChartWrap"><canvas id="dotDoyChart"></canvas></div>
           <p class="modelNote" id="projectionNote"></p>
@@ -1832,9 +1776,10 @@
       selectedIndex:null,
       thresholdFt:2.55,
       uncertaintyFt:.5,
+      datum:"navd88",
+      profileYZoom:null,
       activeBasemap:"current",
-      projectionScenario:"intermediate",
-      view3d:false
+      projectionScenario:"intermediate"
     };
 
     const PROJECTION_SCENARIOS = {
@@ -1895,34 +1840,6 @@
 
     const hillshadeLayerGroup = L.layerGroup().addTo(map);
 
-    const thresholdPlugin = {
-      id:"riskThreshold",
-      afterDatasetsDraw(chart){
-        if(chart?.canvas?.id !== "profileChart") return;
-        const yScale = chart.scales.y;
-        const xScale = chart.scales.x;
-        if(!yScale || !xScale) return;
-        const y = yScale.getPixelForValue(state.thresholdFt);
-        const {ctx, chartArea} = chart;
-        if(y < chartArea.top || y > chartArea.bottom) return;
-        ctx.save();
-        ctx.setLineDash([8, 6]);
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = "rgba(251,113,133,.9)";
-        ctx.beginPath();
-        ctx.moveTo(chartArea.left, y);
-        ctx.lineTo(chartArea.right, y);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.fillStyle = "rgba(251,113,133,.95)";
-        ctx.font = "700 11px ui-sans-serif, system-ui";
-        ctx.fillText(`${state.thresholdFt.toFixed(2)} ft threshold`, chartArea.left + 8, y - 7);
-        ctx.restore();
-      }
-    };
-
-    Chart.register(thresholdPlugin);
-
     function $(id){ return document.getElementById(id); }
     function setText(id, text){ const el = $(id); if(el) el.textContent = text; }
     function fmtFt(v, digits=1){ return Number.isFinite(v) ? `${v.toFixed(digits)} ft` : "-"; }
@@ -1933,6 +1850,89 @@
     function fmtFlood(v, digits=0){ return Number.isFinite(v) ? Number(v).toLocaleString(undefined, { maximumFractionDigits:digits }) : "-"; }
     function activeScenario(){ return PROJECTION_SCENARIOS[state.projectionScenario] || PROJECTION_SCENARIOS.intermediate; }
     function setExportStatus(text){ setText("exportStatus", text); }
+    function activeDatum(){ return state.datum === "mllw" ? "mllw" : "navd88"; }
+    function datumLabel(){ return activeDatum().toUpperCase(); }
+    function datumOffsetFt(){
+      return activeDatum() === "mllw"
+        ? Number(state.floodStats?.datum?.mllwOffsetFromNavd88Ft ?? .45)
+        : 0;
+    }
+    function toDisplayDatum(value){
+      return Number.isFinite(value) ? value + datumOffsetFt() : value;
+    }
+    function fromDisplayDatum(value){
+      const n = Number(value);
+      return Number.isFinite(n) ? n - datumOffsetFt() : n;
+    }
+    function fmtDatumFt(navd88Ft, digits=2){
+      const value = toDisplayDatum(navd88Ft);
+      return Number.isFinite(value) ? `${value.toFixed(digits)} ft ${datumLabel()}` : "-";
+    }
+    function activeDatumThresholds(){
+      const thresholds = state.floodStats?.thresholds?.[activeDatum()];
+      if(thresholds) return thresholds;
+      const fallback = state.floodStats?.thresholds?.navd88 || { minor:2.55, moderate:3.55, major:4.55 };
+      if(activeDatum() === "mllw"){
+        const offset = datumOffsetFt();
+        return {
+          minor:fallback.minor + offset,
+          moderate:fallback.moderate + offset,
+          major:fallback.major + offset
+        };
+      }
+      return fallback;
+    }
+    function chartFontSizes(paneId){
+      const expanded = Boolean($("shell")?.classList.contains("paneExpanded") && $(paneId)?.classList.contains("isExpanded"));
+      return {
+        tick:expanded ? 15 : 10,
+        title:expanded ? 17 : 11,
+        legend:expanded ? 15 : 11,
+        tooltip:expanded ? 15 : 12,
+        line:expanded ? 3 : 2,
+        point:expanded ? 8 : 6
+      };
+    }
+    function linkedLegendClick(event, legendItem, legend){
+      const chart = legend.chart;
+      const dataset = chart.data.datasets[legendItem.datasetIndex];
+      const group = dataset?.legendGroup;
+      const visible = chart.isDatasetVisible(legendItem.datasetIndex);
+      chart.data.datasets.forEach((item, index) => {
+        if(index === legendItem.datasetIndex || (group && item.legendGroup === group)){
+          chart.setDatasetVisibility(index, !visible);
+        }
+      });
+      chart.update();
+    }
+    function legendOptions(paneId){
+      const fonts = chartFontSizes(paneId);
+      return {
+        display:true,
+        position:"top",
+        labels:{
+          color:"#dbeafe",
+          usePointStyle:true,
+          boxWidth:fonts.legend + 1,
+          font:{ size:fonts.legend, weight:"800" },
+          filter(item, data){ return !data.datasets[item.datasetIndex]?.legendHidden; }
+        },
+        onClick:linkedLegendClick
+      };
+    }
+    function chartVisibility(chart){
+      const visibility = new Map();
+      chart?.data?.datasets?.forEach((dataset, index) => {
+        visibility.set(dataset.label, chart.isDatasetVisible(index));
+      });
+      return visibility;
+    }
+    function restoreChartVisibility(chart, visibility){
+      if(!chart || !visibility?.size) return;
+      chart.data.datasets.forEach((dataset, index) => {
+        if(visibility.has(dataset.label)) chart.setDatasetVisibility(index, visibility.get(dataset.label));
+      });
+    }
 
     function resizeCharts(){
       state.chart?.resize();
@@ -1942,29 +1942,8 @@
 
     function updateHillshadeOpacity(){
       if(!state.hillshadeOverlay) return;
-      const reliefMode = state.activeBasemap === "terrain" || state.view3d;
+      const reliefMode = state.activeBasemap === "terrain";
       state.hillshadeOverlay.setOpacity(reliefMode ? .58 : .38);
-    }
-
-    function setView3d(active){
-      state.view3d = Boolean(active);
-      document.body.classList.toggle("view-3d", state.view3d);
-      const button = $("view3dBtn");
-      if(button){
-        button.classList.toggle("active", state.view3d);
-        button.classList.toggle("secondary", !state.view3d);
-        button.textContent = state.view3d ? "3D On" : "3D View";
-      }
-      updateHillshadeOpacity();
-      window.setTimeout(() => {
-        map.invalidateSize();
-        resizeCharts();
-      }, 280);
-    }
-
-    function setTilt(value){
-      const tilt = clamp(Number(value), 34, 64);
-      document.documentElement.style.setProperty("--map-tilt", `${tilt}deg`);
     }
 
     function togglePaneExpansion(paneId){
@@ -1982,6 +1961,9 @@
         button.setAttribute("aria-label", label);
         button.title = label;
       });
+      renderChart(state.profile);
+      if(state.selectedIndex !== null && state.selectedIndex !== undefined) updateInspection(false);
+      else renderPointFloodProduct(null);
       window.setTimeout(() => {
         map.invalidateSize();
         resizeCharts();
@@ -2476,7 +2458,6 @@
 
     function updateStats(profile){
       const valid = profile.filter(p => Number.isFinite(p.elevationFt));
-      $("sampleCountPill").textContent = `${valid.length} samples`;
       if(!valid.length){
         setText("minElev", "-");
         setText("exposedPct", "-");
@@ -2501,7 +2482,7 @@
         }
       }
 
-      setText("minElev", fmtFt(min.elevationFt, 1));
+      setText("minElev", fmtDatumFt(min.elevationFt, 1));
       setText("exposedPct", `${Math.round((riskLen / Math.max(len, 1)) * 100)}%`);
       setText("profileLen", fmtLen(len));
       setText("riskLen", fmtLen(riskLen));
@@ -2539,16 +2520,73 @@
       }
     }
 
+    function profileDisplayRange(profile){
+      const values = profile
+        .map(p => toDisplayDatum(p.elevationFt))
+        .filter(Number.isFinite);
+      const threshold = toDisplayDatum(state.thresholdFt);
+      if(Number.isFinite(threshold)) values.push(threshold);
+      if(!values.length) return { min:0, max:6 };
+      let min = Math.min(...values);
+      let max = Math.max(...values);
+      if(Math.abs(max - min) < .5){
+        min -= .25;
+        max += .25;
+      }
+      const pad = Math.max(.25, (max - min) * .12);
+      return { min:min - pad, max:max + pad };
+    }
+
+    function applyProfileZoom(chart){
+      if(!chart || !state.profileYZoom) return;
+      chart.options.scales.y.min = state.profileYZoom.min;
+      chart.options.scales.y.max = state.profileYZoom.max;
+    }
+
+    function handleProfileWheel(event){
+      if(!state.chart || !state.profile.length) return;
+      event.preventDefault();
+      const yScale = state.chart.scales.y;
+      if(!yScale) return;
+      const base = profileDisplayRange(state.profile);
+      const currentMin = Number.isFinite(state.profileYZoom?.min) ? state.profileYZoom.min : yScale.min;
+      const currentMax = Number.isFinite(state.profileYZoom?.max) ? state.profileYZoom.max : yScale.max;
+      const center = yScale.getValueForPixel(event.offsetY);
+      if(!Number.isFinite(center)) return;
+      const factor = event.deltaY < 0 ? .82 : 1.18;
+      const minSpan = .35;
+      const maxSpan = Math.max(1, (base.max - base.min) * 3);
+      const nextSpan = clamp((currentMax - currentMin) * factor, minSpan, maxSpan);
+      const currentSpan = currentMax - currentMin || 1;
+      const centerRatio = clamp((center - currentMin) / currentSpan, 0, 1);
+      let nextMin = center - nextSpan * centerRatio;
+      let nextMax = nextMin + nextSpan;
+      const limitMin = base.min - (base.max - base.min);
+      const limitMax = base.max + (base.max - base.min);
+      if(nextMin < limitMin){
+        nextMin = limitMin;
+        nextMax = nextMin + nextSpan;
+      }
+      if(nextMax > limitMax){
+        nextMax = limitMax;
+        nextMin = nextMax - nextSpan;
+      }
+      state.profileYZoom = { min:nextMin, max:nextMax };
+      applyProfileZoom(state.chart);
+      state.chart.update("none");
+    }
+
     function renderChart(profile){
       const ctx = $("profileChart");
       const valid = profile.filter(p => Number.isFinite(p.elevationFt));
       const labels = profile.map(p => Math.round(p.distanceFt));
-      const data = profile.map(p => Number.isFinite(p.elevationFt) ? p.elevationFt : null);
-      const riskData = profile.map(p => Number.isFinite(p.elevationFt) && p.elevationFt <= state.thresholdFt ? p.elevationFt : null);
-      const inspectData = profile.map((p, i) => i === state.selectedIndex && Number.isFinite(p.elevationFt) ? p.elevationFt : null);
-      $("chartStatus").textContent = valid.length ? `${valid.length} DEM samples` : "Waiting for a line";
-      if(state.chart) state.chart.destroy();
-      state.chart = new Chart(ctx, {
+      const data = profile.map(p => Number.isFinite(p.elevationFt) ? toDisplayDatum(p.elevationFt) : null);
+      const riskData = profile.map(p => Number.isFinite(p.elevationFt) && p.elevationFt <= state.thresholdFt ? toDisplayDatum(p.elevationFt) : null);
+      const thresholdData = profile.map(() => toDisplayDatum(state.thresholdFt));
+      const inspectData = profile.map((p, i) => i === state.selectedIndex && Number.isFinite(p.elevationFt) ? toDisplayDatum(p.elevationFt) : null);
+      const fonts = chartFontSizes("crossSectionPane");
+      const yRange = state.profileYZoom || profileDisplayRange(profile);
+      const config = {
         type:"line",
         data:{
           labels,
@@ -2560,27 +2598,39 @@
               backgroundColor:"rgba(34,211,238,.16)",
               fill:true,
               pointRadius:0,
-              borderWidth:2,
+              borderWidth:fonts.line,
               tension:.22,
               spanGaps:false
             },
             {
-              label:"Below threshold",
+              label:"Exposed below threshold",
               data:riskData,
               borderColor:"#fb7185",
               backgroundColor:"rgba(251,113,133,.18)",
               pointRadius:0,
-              borderWidth:4,
+              borderWidth:fonts.line + 2,
               tension:.12,
               spanGaps:false
             },
             {
-              label:"Inspect dot",
+              label:"Flood threshold",
+              data:thresholdData,
+              borderColor:"#fb7185",
+              backgroundColor:"#fb7185",
+              pointRadius:0,
+              borderDash:[8, 6],
+              borderWidth:fonts.line,
+              fill:false,
+              tension:0,
+              spanGaps:false
+            },
+            {
+              label:"Selected location",
               data:inspectData,
               borderColor:"#fff7ed",
               backgroundColor:"#fb7185",
-              pointRadius:6,
-              pointHoverRadius:8,
+              pointRadius:fonts.point,
+              pointHoverRadius:fonts.point + 2,
               borderWidth:0,
               showLine:false,
               spanGaps:false
@@ -2596,34 +2646,51 @@
             if(hits.length) selectProfileIndex(hits[0].index, true, true);
           },
           plugins:{
-            legend:{ labels:{ color:"#dbeafe", usePointStyle:true, boxWidth:8 } },
+            legend:legendOptions("crossSectionPane"),
             tooltip:{
+              titleFont:{ size:fonts.tooltip, weight:"800" },
+              bodyFont:{ size:fonts.tooltip },
               callbacks:{
                 title(items){ return `${items[0].label} ft along section`; },
-                label(item){ return `${item.dataset.label}: ${fmtFt(item.parsed.y, 2)}`; }
+                label(item){
+                  const value = item.parsed?.y;
+                  return Number.isFinite(value) ? `${item.dataset.label}: ${value.toFixed(2)} ft ${datumLabel()}` : null;
+                }
               }
             }
           },
           scales:{
             x:{
-              ticks:{ color:"#9fb0d1", maxTicksLimit:9 },
+              ticks:{ color:"#9fb0d1", maxTicksLimit:9, font:{ size:fonts.tick, weight:"700" } },
               grid:{ color:"rgba(148,163,184,.12)" },
-              title:{ display:true, text:"Distance along section (ft)", color:"#bfdbfe", font:{ weight:"bold" } }
+              title:{ display:true, text:"Distance along section (ft)", color:"#bfdbfe", font:{ size:fonts.title, weight:"bold" } }
             },
             y:{
-              ticks:{ color:"#9fb0d1" },
+              min:yRange.min,
+              max:yRange.max,
+              ticks:{ color:"#9fb0d1", font:{ size:fonts.tick, weight:"700" } },
               grid:{ color:"rgba(148,163,184,.14)" },
-              title:{ display:true, text:"Elevation (ft)", color:"#bfdbfe", font:{ weight:"bold" } }
+              title:{ display:true, text:`Elevation (ft ${datumLabel()})`, color:"#bfdbfe", font:{ size:fonts.title, weight:"bold" } }
             }
           }
         }
-      });
+      };
+      if(state.chart){
+        const visibility = chartVisibility(state.chart);
+        state.chart.data = config.data;
+        state.chart.options = config.options;
+        restoreChartVisibility(state.chart, visibility);
+        state.chart.update("none");
+      }else{
+        state.chart = new Chart(ctx, config);
+      }
       resizeCharts();
     }
 
     function renderAnnualFloodChart(bucketStats){
       const canvas = $("dotAnnualChart");
       if(!canvas) return;
+      const fonts = chartFontSizes("floodHistoryPane");
       const labels = bucketStats
         ? [
             ...bucketStats.annualRows.map(row => row.year),
@@ -2665,6 +2732,8 @@
             {
               type:"line",
               label:"Forecast low",
+              legendHidden:true,
+              legendGroup:"annualForecastRange",
               data:low,
               borderWidth:0,
               pointRadius:0,
@@ -2676,6 +2745,7 @@
             {
               type:"line",
               label:"Forecast range",
+              legendGroup:"annualForecastRange",
               data:high,
               borderWidth:0,
               pointRadius:0,
@@ -2691,7 +2761,7 @@
               borderColor:"rgba(251,191,36,.96)",
               backgroundColor:"rgba(251,191,36,.96)",
               borderDash:[7,5],
-              borderWidth:2,
+              borderWidth:fonts.line,
               pointRadius:0,
               pointHitRadius:8,
               tension:.2,
@@ -2706,10 +2776,10 @@
           animation:false,
           interaction:{mode:"index", intersect:false},
           plugins:{
-            legend:{
-              display:false
-            },
+            legend:legendOptions("floodHistoryPane"),
             tooltip:{
+              titleFont:{ size:fonts.tooltip, weight:"800" },
+              bodyFont:{ size:fonts.tooltip },
               callbacks:{
                 label(ctx){
                   const v = ctx.parsed?.y;
@@ -2731,12 +2801,12 @@
           },
           scales:{
             x:{
-              ticks:{ color:"#9fb0d1", maxRotation:0, autoSkip:true, maxTicksLimit:6 },
+              ticks:{ color:"#9fb0d1", maxRotation:0, autoSkip:true, maxTicksLimit:6, font:{ size:fonts.tick, weight:"700" } },
               grid:{ display:false }
             },
             y:{
               beginAtZero:true,
-              ticks:{ color:"#9fb0d1", precision:0, maxTicksLimit:4 },
+              ticks:{ color:"#9fb0d1", precision:0, maxTicksLimit:4, font:{ size:fonts.tick, weight:"700" } },
               grid:{ color:"rgba(148,163,184,.12)" }
             }
           }
@@ -2744,8 +2814,10 @@
       };
 
       if(state.annualFloodChart){
+        const visibility = chartVisibility(state.annualFloodChart);
         state.annualFloodChart.data = config.data;
         state.annualFloodChart.options = config.options;
+        restoreChartVisibility(state.annualFloodChart, visibility);
         state.annualFloodChart.update("none");
       }else{
         state.annualFloodChart = new Chart(canvas, config);
@@ -2756,12 +2828,15 @@
     function renderDoyFloodChart(bucketStats){
       const canvas = $("dotDoyChart");
       if(!canvas) return;
+      const fonts = chartFontSizes("floodHistoryPane");
       const labels = Array.from({length:365}, (_, i) => i + 1);
       const data = {
         labels,
         datasets:[
           {
             label:"Range floor",
+            legendHidden:true,
+            legendGroup:"historicRange",
             data:bucketStats?.min || [],
             borderWidth:0,
             pointRadius:0,
@@ -2772,6 +2847,7 @@
           },
           {
             label:"Historic range",
+            legendGroup:"historicRange",
             data:bucketStats?.max || [],
             borderWidth:0,
             pointRadius:0,
@@ -2785,7 +2861,7 @@
             data:bucketStats?.avg || [],
             borderColor:"rgba(255,255,255,.90)",
             backgroundColor:"rgba(255,255,255,.90)",
-            borderWidth:2,
+            borderWidth:fonts.line,
             pointRadius:0,
             pointHitRadius:8,
             tension:.22,
@@ -2796,7 +2872,7 @@
             data:bucketStats?.current || [],
             borderColor:"rgba(251,113,133,.95)",
             backgroundColor:"rgba(251,113,133,.95)",
-            borderWidth:2.8,
+            borderWidth:fonts.line + .8,
             pointRadius:0,
             pointHitRadius:8,
             stepped:"after",
@@ -2805,6 +2881,8 @@
           },
           {
             label:"Forecast low",
+            legendHidden:true,
+            legendGroup:"seasonForecastRange",
             data:bucketStats?.forecastLow || [],
             borderWidth:0,
             pointRadius:0,
@@ -2815,6 +2893,7 @@
           },
           {
             label:"Forecast range",
+            legendGroup:"seasonForecastRange",
             data:bucketStats?.forecastHigh || [],
             borderWidth:0,
             pointRadius:0,
@@ -2829,7 +2908,7 @@
             borderColor:"rgba(251,191,36,.96)",
             backgroundColor:"rgba(251,191,36,.96)",
             borderDash:[7,5],
-            borderWidth:2,
+            borderWidth:fonts.line,
             pointRadius:0,
             pointHitRadius:8,
             tension:.22,
@@ -2843,8 +2922,10 @@
         animation:false,
         interaction:{mode:"index", intersect:false},
         plugins:{
-          legend:{ display:false },
+          legend:legendOptions("floodHistoryPane"),
           tooltip:{
+            titleFont:{ size:fonts.tooltip, weight:"800" },
+            bodyFont:{ size:fonts.tooltip },
             callbacks:{
               title(items){
                 const idx = Number(items?.[0]?.label) - 1;
@@ -2881,6 +2962,7 @@
               color:"#9fb0d1",
               maxRotation:0,
               autoSkip:false,
+              font:{ size:fonts.tick, weight:"700" },
               callback(value){
                 const day = Number(value);
                 const month = MONTH_STARTS.indexOf(day - 1);
@@ -2891,15 +2973,17 @@
           },
           y:{
             beginAtZero:true,
-            ticks:{ color:"#9fb0d1", precision:0, maxTicksLimit:4 },
+            ticks:{ color:"#9fb0d1", precision:0, maxTicksLimit:4, font:{ size:fonts.tick, weight:"700" } },
             grid:{ color:"rgba(148,163,184,.12)" }
           }
         }
       };
 
       if(state.doyFloodChart){
+        const visibility = chartVisibility(state.doyFloodChart);
         state.doyFloodChart.data = data;
         state.doyFloodChart.options = options;
+        restoreChartVisibility(state.doyFloodChart, visibility);
         state.doyFloodChart.update("none");
       }else{
         state.doyFloodChart = new Chart(canvas, { type:"line", data, options });
@@ -2921,16 +3005,12 @@
         return null;
       }
 
-      setText("floodBucketPill", `${bucketStats.threshold.toFixed(1)} ft`);
+      setText("floodBucketPill", fmtDatumFt(bucketStats.threshold, 1));
       setText("floodArchiveTotal", fmtFlood(bucketStats.total, 0));
       setText("floodOutlook", bucketStats.projection2100 ? fmtFlood(bucketStats.projection2100.mean, 1) : "-");
       setText("annualFloodMeta", `${bucketStats.firstYear}-2100`);
       setText("doyFloodMeta", `${bucketStats.projectionYear} ${bucketStats.scenarioShort}`);
-      const scenarioText = bucketStats.scenarioLabel.toLowerCase();
-      const note = bucketStats.projection2100 && bucketStats.projection2100.mean < .05 && Number.isFinite(bucketStats.modelCeilingFt)
-        ? `Present-year CDF, ${bucketStats.total}/${bucketStats.presentDistribution.count} archive days; no ${scenarioText} 2100 flood days.`
-        : `Present-year CDF, ${bucketStats.total}/${bucketStats.presentDistribution.count} archive days; ${scenarioText} sea-level rise projected forward.`;
-      setText("projectionNote", note);
+      setText("projectionNote", "");
       renderAnnualFloodChart(bucketStats);
       renderDoyFloodChart(bucketStats);
       return bucketStats;
@@ -2973,7 +3053,7 @@
       if(!stats) return "";
       return `
         <div class="popupStats">
-          <strong>${fmtFt(stats.elevationFt, 2)} NAVD88</strong>
+          <strong>${fmtDatumFt(stats.elevationFt, 2)}</strong>
           <span>${fmtLen(point.distanceFt)} along section</span>
           <span>Recurrence: ${stats.recurrence}</span>
           <span>Clearance: ${fmtSigned(stats.clearance, 2)}</span>
@@ -3006,9 +3086,9 @@
       }
       const bucketStats = renderPointFloodProduct(stats.bucketStageFt);
       setText("pointDistance", fmtLen(point.distanceFt));
-      setText("pointElev", fmtFt(stats.elevationFt, 1));
+      setText("pointElev", fmtDatumFt(stats.elevationFt, 1));
       setText("pointClass", stats.stageClass.label);
-      $("pointClass").style.background = stats.stageClass.color;
+      if($("pointClass")) $("pointClass").style.background = stats.stageClass.color;
       setText("pointClearance", fmtSigned(stats.clearance, 2));
       setText("pointReturn", stats.recurrence);
       setText("pointExceedances", `${fmtCount(stats.exceedances)} days`);
@@ -3016,13 +3096,17 @@
 
       const latLng = L.latLng(point.lat, point.lng);
       if(!state.inspectMarker){
-        state.inspectMarker = L.marker(latLng, { icon:inspectIcon(), keyboard:true, title:"Inspect point" }).addTo(map);
-        state.inspectMarker.on("click", () => state.inspectMarker.openPopup());
+        state.inspectMarker = L.marker(latLng, {
+          icon:inspectIcon(),
+          keyboard:false,
+          interactive:false,
+          title:"Selected location",
+          zIndexOffset:50
+        }).addTo(map);
       }else{
         state.inspectMarker.setLatLng(latLng);
       }
       state.inspectMarker.bindPopup(popupHtml(point, stats));
-      if(openPopup) state.inspectMarker.openPopup();
     }
 
     function nearestProfileIndex(latLng){
@@ -3075,7 +3159,7 @@
       resetInspection();
       updateStats([]);
       renderChart([]);
-      $("chartStatus").textContent = "Waiting for a line";
+      setText("chartStatus", "Waiting for a line");
     }
 
     function markerIcon(){
@@ -3090,8 +3174,8 @@
     function drawSection(a, b, fit=false){
       clearSection();
       state.markers = [
-        L.marker(a, { icon:markerIcon(), draggable:true }).addTo(map),
-        L.marker(b, { icon:markerIcon(), draggable:true }).addTo(map)
+        L.marker(a, { icon:markerIcon(), draggable:true, zIndexOffset:2000, title:"Section endpoint" }).addTo(map),
+        L.marker(b, { icon:markerIcon(), draggable:true, zIndexOffset:2000, title:"Section endpoint" }).addTo(map)
       ];
       state.line = L.polyline([a, b], {
         color:"#38bdf8",
@@ -3124,7 +3208,7 @@
 
     function runProfile(a, b){
       if(!state.raster){
-        $("chartStatus").textContent = "DEM still loading";
+        setText("chartStatus", "DEM still loading");
         return;
       }
       state.profile = buildProfile(a, b);
@@ -3296,7 +3380,7 @@
       const line = state.savedLines.find(item => item.id === id);
       if(!line) return;
       setDrawMode(false);
-      setThreshold(line.thresholdFt ?? state.thresholdFt);
+      setThreshold(toDisplayDatum(line.thresholdFt ?? state.thresholdFt));
       drawSection(L.latLng(line.a.lat, line.a.lng), L.latLng(line.b.lat, line.b.lng), true);
       setExportStatus(`Loaded "${line.name || "saved line"}".`);
     }
@@ -3322,19 +3406,59 @@
         uncertaintyInput.value = (stats.verticalUncertaintyFt || state.uncertaintyFt).toFixed(2);
         state.uncertaintyFt = Number(uncertaintyInput.value);
       }
+      updateThresholdControls();
+    }
+
+    function updateThresholdControls(){
+      const displayValue = toDisplayDatum(state.thresholdFt);
+      const number = $("thresholdNumber");
+      if(number){
+        number.value = Number.isFinite(displayValue) ? displayValue.toFixed(2) : "";
+        number.setAttribute("aria-label", `Custom stage in feet ${datumLabel()}`);
+      }
+      setText("thresholdPill", `${Number.isFinite(displayValue) ? displayValue.toFixed(2) : "-"} ft ${datumLabel()}`);
+      const thresholds = activeDatumThresholds();
+      const labels = { minor:"Minor", moderate:"Moderate", major:"Major" };
+      document.querySelectorAll("[data-threshold-level]").forEach(button => {
+        const level = button.dataset.thresholdLevel;
+        const value = thresholds[level];
+        button.innerHTML = `<span>${labels[level] || level}</span><small>${Number.isFinite(value) ? value.toFixed(2) : "-"} ft</small>`;
+      });
+      document.querySelectorAll("[data-datum]").forEach(button => {
+        const active = button.dataset.datum === activeDatum();
+        button.classList.toggle("active", active);
+        button.classList.toggle("secondary", !active);
+      });
     }
 
     function setThreshold(value){
-      state.thresholdFt = clamp(Number(value), -2, 14);
-      $("threshold").value = state.thresholdFt.toFixed(2);
-      $("thresholdNumber").value = state.thresholdFt.toFixed(2);
-      $("thresholdPill").textContent = `${state.thresholdFt.toFixed(2)} ft`;
+      const next = fromDisplayDatum(value);
+      if(!Number.isFinite(next)) return;
+      state.thresholdFt = clamp(next, -2, 14);
+      updateThresholdControls();
       if(state.profile.length){
         updateStats(state.profile);
         renderRiskSegments(state.profile);
         renderChart(state.profile);
         updateInspection(false);
       }
+    }
+
+    function setThresholdLevel(level){
+      const value = activeDatumThresholds()[level];
+      if(Number.isFinite(value)) setThreshold(value);
+    }
+
+    function setDatum(datum){
+      const next = datum === "mllw" ? "mllw" : "navd88";
+      if(next === state.datum) return;
+      state.datum = next;
+      state.profileYZoom = null;
+      updateThresholdControls();
+      updateStats(state.profile);
+      renderChart(state.profile);
+      if(state.selectedIndex !== null && state.selectedIndex !== undefined) updateInspection(false);
+      else renderPointFloodProduct(null);
     }
 
     function setUncertainty(value){
@@ -3402,12 +3526,12 @@
     $("thresholdNumber").addEventListener("keydown", event => {
       if(event.key === "Enter") setThreshold(event.currentTarget.value);
     });
-    $("threshold").addEventListener("input", event => setThreshold(event.target.value));
     $("uncertaintyNumber").addEventListener("input", event => setUncertainty(event.target.value));
-    $("view3dBtn").addEventListener("click", () => setView3d(!state.view3d));
-    $("tiltRange").addEventListener("input", event => setTilt(event.target.value));
-    document.querySelectorAll("[data-threshold-preset]").forEach(button => {
-      button.addEventListener("click", () => setThreshold(button.dataset.thresholdPreset));
+    document.querySelectorAll("[data-threshold-level]").forEach(button => {
+      button.addEventListener("click", () => setThresholdLevel(button.dataset.thresholdLevel));
+    });
+    document.querySelectorAll("[data-datum]").forEach(button => {
+      button.addEventListener("click", () => setDatum(button.dataset.datum));
     });
     document.querySelectorAll("[data-basemap]").forEach(button => {
       button.addEventListener("click", () => setBasemap(button.dataset.basemap));
@@ -3429,7 +3553,7 @@
       if(state.pendingPoints.length === 1){
         state.markers.forEach(m => map.removeLayer(m));
         state.markers = [L.marker(event.latlng, { icon:markerIcon() }).addTo(map)];
-        $("chartStatus").textContent = "Choose endpoint";
+        setText("chartStatus", "Choose endpoint");
         return;
       }
       const [a,b] = state.pendingPoints;
@@ -3439,12 +3563,17 @@
 
     renderChart([]);
     updateStats([]);
-    setTilt($("tiltRange").value);
+    updateThresholdControls();
+    $("profileChart").addEventListener("wheel", handleProfileWheel, { passive:false });
+    $("profileChart").addEventListener("dblclick", () => {
+      state.profileYZoom = null;
+      renderChart(state.profile);
+    });
     loadSavedLines();
     loadApp().catch(err => {
       console.error(err);
       setReady(false, "DEM failed");
-      $("chartStatus").textContent = "DEM failed to load";
+      setText("chartStatus", "DEM failed to load");
     });
   </script>
 </body>
