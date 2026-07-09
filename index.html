@@ -36,10 +36,10 @@
       --warn:#fbbf24;
       --ok:#34d399;
       --ink:#07111f;
-      --shadow:0 18px 48px rgba(0,0,0,.42);
-      --right-rail:340px;
+      --shadow:0 14px 34px rgba(0,0,0,.34);
+      --right-rail:320px;
       --ui-gap:16px;
-      --cross-section-h:34vh;
+      --cross-section-h:clamp(300px, 32vh, 380px);
     }
 
     *{box-sizing:border-box}
@@ -69,22 +69,22 @@
     .titleBar{
       position:absolute;
       top:50%;
-      left:clamp(18px, 10vw, 170px);
-      width:min(34vw, 420px);
+      left:clamp(18px, 8vw, 150px);
+      width:min(26vw, 300px);
       transform:translateY(-50%);
       display:flex;
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      gap:12px;
-      min-height:64px;
-      padding:16px 18px;
-      border-radius:16px;
-      background:rgba(10,15,25,.76);
-      box-shadow:var(--shadow);
-      border:1px solid rgba(255,255,255,.12);
-      backdrop-filter:blur(12px);
-      pointer-events:auto;
+      gap:8px;
+      min-height:48px;
+      padding:10px 12px;
+      border-radius:12px;
+      background:rgba(10,15,25,.42);
+      box-shadow:0 8px 20px rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.08);
+      backdrop-filter:blur(8px);
+      pointer-events:none;
       text-align:center;
     }
 
@@ -96,14 +96,14 @@
     .eyebrow{
       margin:0 0 2px;
       color:#bfdbfe;
-      font-size:12px;
+      font-size:10px;
       font-weight:900;
       text-transform:uppercase;
     }
 
     h1{
       margin:0;
-      font-size:32px;
+      font-size:28px;
       line-height:1;
       white-space:nowrap;
       font-weight:950;
@@ -113,12 +113,12 @@
       display:inline-flex;
       align-items:center;
       gap:8px;
-      padding:9px 11px;
+      padding:6px 9px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,.14);
       background:rgba(255,255,255,.06);
       color:#dbeafe;
-      font-size:12px;
+      font-size:11px;
       font-weight:900;
       white-space:nowrap;
     }
@@ -132,55 +132,54 @@
     }
 
     .leftPanel,
-    .rightPanel,
-    .bottomPanel{
+    .rightPanel{
       pointer-events:auto;
       position:absolute;
-      border-radius:18px;
+      width:var(--right-rail);
+      display:grid;
+      gap:10px;
+    }
+
+    .leftPanel{
+      top:calc(50% - 8px);
+      right:var(--ui-gap);
+      transform:translateY(-50%);
+      max-height:calc(100vh - var(--cross-section-h) - 56px);
+      overflow:auto;
+    }
+
+    .rightPanel{
+      top:var(--ui-gap);
+      right:var(--ui-gap);
+      max-height:calc(50vh - 20px);
+      overflow:visible;
+    }
+
+    .bottomPanel{
+      pointer-events:auto;
+      left:auto;
+      right:var(--ui-gap);
+      bottom:var(--ui-gap);
+      width:min(940px, calc(50vw - 24px));
+      min-width:640px;
+      height:var(--cross-section-h);
+      padding:12px;
+      position:absolute;
+      border-radius:14px;
       background:rgba(15,23,42,.92);
       border:1px solid rgba(255,255,255,.13);
       box-shadow:var(--shadow);
       backdrop-filter:blur(14px);
     }
 
-    .leftPanel{
-      top:calc(32vh + var(--ui-gap));
-      right:var(--ui-gap);
-      bottom:calc(var(--cross-section-h) + 32px);
-      width:var(--right-rail);
-      overflow:auto;
-      padding:10px;
-    }
-
-    .rightPanel{
-      top:var(--ui-gap);
-      right:var(--ui-gap);
-      width:var(--right-rail);
-      max-height:calc(32vh - 24px);
-      overflow:auto;
-      padding:10px;
-      display:grid;
-      gap:8px;
-    }
-
-    .bottomPanel{
-      left:auto;
-      right:var(--ui-gap);
-      bottom:var(--ui-gap);
-      width:calc(50vw - 24px);
-      min-width:460px;
-      height:var(--cross-section-h);
-      min-height:238px;
-      max-height:360px;
-      padding:10px 12px 12px;
-    }
-
     .panelBlock{
       border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.045);
-      padding:10px;
-      margin-bottom:8px;
+      border:1px solid rgba(255,255,255,.13);
+      background:rgba(15,23,42,.91);
+      box-shadow:0 12px 30px rgba(0,0,0,.30);
+      backdrop-filter:blur(12px);
+      padding:11px;
+      margin-bottom:10px;
     }
 
     .panelBlock:last-child{margin-bottom:0}
@@ -213,6 +212,18 @@
       display:grid;
       grid-template-columns:1fr 1fr;
       gap:7px;
+    }
+
+    .leftPanel .buttonGrid{
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:6px;
+    }
+
+    .leftPanel .buttonGrid button{
+      min-height:32px;
+      padding:5px 4px;
+      font-size:10px;
+      line-height:1.05;
     }
 
     button,
@@ -339,14 +350,17 @@
       display:grid;
       grid-template-columns:1fr 1fr;
       gap:7px;
+      padding:0;
     }
 
     .stat{
-      min-height:56px;
-      padding:8px;
+      min-height:48px;
+      padding:8px 9px;
       border-radius:10px;
       border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.06);
+      background:rgba(15,23,42,.91);
+      box-shadow:0 10px 24px rgba(0,0,0,.24);
+      backdrop-filter:blur(12px);
     }
 
     .stat .k{
@@ -358,8 +372,8 @@
     }
 
     .stat .v{
-      margin-top:5px;
-      font-size:18px;
+      margin-top:4px;
+      font-size:17px;
       font-weight:950;
       line-height:1.1;
     }
@@ -399,15 +413,15 @@
 
     .metricRows{
       display:grid;
-      gap:6px;
+      grid-template-columns:1fr 1fr;
+      gap:5px;
     }
 
     .metricRow{
       display:grid;
-      grid-template-columns:minmax(0,1fr) auto;
-      gap:10px;
+      gap:3px;
       align-items:baseline;
-      padding:7px 8px;
+      padding:6px 7px;
       border-radius:10px;
       background:rgba(2,6,23,.30);
       border:1px solid rgba(255,255,255,.09);
@@ -415,9 +429,9 @@
 
     .metricRow .v{
       color:#edf6ff;
-      font-size:13px;
+      font-size:12px;
       font-weight:950;
-      text-align:right;
+      text-align:left;
       white-space:nowrap;
     }
 
@@ -426,15 +440,15 @@
       grid-template-columns:1fr auto;
       gap:10px;
       align-items:end;
-      padding:9px;
-      margin-bottom:7px;
+      padding:7px;
+      margin-bottom:5px;
       border-radius:12px;
-      background:linear-gradient(135deg,rgba(34,211,238,.16),rgba(251,113,133,.10));
+      background:rgba(34,211,238,.12);
       border:1px solid rgba(125,211,252,.26);
     }
 
     .pointHero .height{
-      font-size:26px;
+      font-size:22px;
       line-height:1;
       font-weight:950;
     }
@@ -478,19 +492,60 @@
       align-items:center;
       justify-content:space-between;
       gap:12px;
-      margin-bottom:8px;
+      margin-bottom:6px;
     }
 
     .chartTitle{
       margin:0;
-      font-size:14px;
+      font-size:13px;
       font-weight:950;
     }
 
+    .chartPills{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:5px;
+      flex-wrap:wrap;
+    }
+
+    .chartPills .pill{
+      min-height:24px;
+      padding:4px 8px;
+      font-size:10px;
+    }
+
     .chartWrap{
-      height:calc(100% - 34px);
-      min-height:190px;
+      flex:1;
+      min-height:0;
+      height:auto;
       width:100%;
+    }
+
+    .bottomGrid{
+      height:100%;
+      display:grid;
+      grid-template-columns:minmax(0,1.35fr) minmax(250px,.82fr);
+      gap:12px;
+    }
+
+    .profilePane,
+    .floodPane{
+      min-width:0;
+      min-height:0;
+    }
+
+    .profilePane{
+      display:flex;
+      flex-direction:column;
+    }
+
+    .floodPane{
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+      padding-left:12px;
+      border-left:1px solid rgba(255,255,255,.12);
     }
 
     .tinyChartLabel{
@@ -498,14 +553,14 @@
       align-items:center;
       justify-content:space-between;
       gap:8px;
-      margin:8px 0 5px;
+      margin:4px 0 3px;
       color:#eaf3ff;
-      font-size:12px;
+      font-size:11px;
       font-weight:950;
     }
 
     .tinyChartWrap{
-      height:118px;
+      height:clamp(42px, 6vh, 76px);
       width:100%;
     }
 
@@ -517,15 +572,100 @@
       display:grid;
       grid-template-columns:repeat(3,1fr);
       gap:6px;
-      margin-bottom:7px;
+      margin-bottom:6px;
     }
 
     .floodSummary .miniStat{
-      min-height:48px;
+      min-height:38px;
+      padding:6px;
     }
 
     .floodSummary .miniStat .v{
-      font-size:15px;
+      font-size:13px;
+    }
+
+    .mapControl{
+      pointer-events:auto;
+      position:absolute;
+      top:16px;
+      right:calc(var(--right-rail) + (var(--ui-gap) * 2));
+      width:236px;
+      margin:0;
+      padding:7px;
+    }
+
+    .scenarioRow{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:6px;
+      margin-bottom:6px;
+    }
+
+    .scenarioRow button{
+      min-height:28px;
+      padding:6px 5px;
+      font-size:10px;
+    }
+
+    .thresholdCompact{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:5px;
+      margin-bottom:5px;
+    }
+
+    .thresholdCompact button{
+      min-height:27px;
+      padding:5px 6px;
+      font-size:10px;
+    }
+
+    .thresholdCompact button.minor{border-color:rgba(245,158,11,.44);background:rgba(245,158,11,.13);color:#fde68a}
+    .thresholdCompact button.moderate{border-color:rgba(244,63,94,.46);background:rgba(244,63,94,.13);color:#fecdd3}
+    .thresholdCompact button.major{border-color:rgba(139,92,246,.50);background:rgba(139,92,246,.16);color:#ddd6fe}
+
+    .thresholdInputRow{
+      grid-column:1 / -1;
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 58px;
+      gap:5px;
+    }
+
+    .thresholdInputRow input{
+      min-height:28px;
+      padding:5px 8px;
+      font-size:12px;
+    }
+
+    .thresholdCompact input[type="range"]{
+      grid-column:1 / -1;
+      min-width:0;
+    }
+
+    .uncertaintyInline{
+      display:none;
+      grid-template-columns:auto minmax(0,1fr);
+      gap:5px;
+      align-items:center;
+      color:#9fb0d1;
+      font-size:11px;
+      font-weight:950;
+    }
+
+    .uncertaintyInline input{
+      min-height:26px;
+      padding:4px 5px;
+      font-size:11px;
+      text-align:center;
+    }
+
+    .modelNote{
+      min-height:12px;
+      margin:2px 0 0;
+      color:#b7c7e5;
+      font-size:9px;
+      line-height:1.25;
+      font-weight:800;
     }
 
     .leaflet-control-zoom{
@@ -586,6 +726,7 @@
         background:#0b1220;
       }
       .titleBar,
+      .mapControl,
       .leftPanel,
       .rightPanel,
       .bottomPanel{
@@ -604,10 +745,16 @@
       .titleBar{
         order:-1;
         border-radius:18px;
+        pointer-events:auto;
+        width:auto;
       }
       h1{font-size:28px;white-space:normal}
       .bottomPanel{min-height:260px}
+      .bottomGrid{grid-template-columns:1fr}
+      .floodPane{padding-left:0;border-left:0;border-top:1px solid rgba(255,255,255,.12);padding-top:10px}
       .chartWrap{height:216px;min-height:216px}
+      .thresholdCompact input[type="range"]{grid-column:1 / -1}
+      .uncertaintyInline{grid-column:1 / -1;grid-template-columns:auto 92px;justify-content:end}
       .tinyChartWrap{height:170px}
       .miniStats{grid-template-columns:1fr 1fr}
     }
@@ -625,6 +772,14 @@
       <div class="badge"><span class="dot" id="readyDot"></span><span id="readyText">Loading DEM</span></div>
     </header>
 
+    <section class="panelBlock mapControl" aria-label="Basemap">
+      <div class="basemapGrid" aria-label="Basemap">
+        <button data-basemap="current" class="active">Current</button>
+        <button data-basemap="satellite" class="secondary">Satellite</button>
+        <button data-basemap="osm" class="secondary">OSM</button>
+      </div>
+    </section>
+
     <aside class="leftPanel">
       <section class="panelBlock">
         <div class="panelTitle">Section <span class="pill" id="sampleCountPill">0 samples</span></div>
@@ -633,41 +788,6 @@
           <button id="clearBtn" class="secondary">Clear</button>
           <button id="sampleBtn" class="secondary">Reset line</button>
           <button id="exportBtn" class="secondary">Export CSV</button>
-        </div>
-      </section>
-
-      <section class="panelBlock">
-        <div class="panelTitle">Water Threshold <span class="pill" id="thresholdPill">2.55 ft NAVD88</span></div>
-        <div class="presetGrid">
-          <button class="minor" data-threshold-preset="2.55">Minor</button>
-          <button class="moderate" data-threshold-preset="3.55">Moderate</button>
-          <button class="major" data-threshold-preset="4.55">Major</button>
-        </div>
-        <label for="thresholdNumber">Custom stage, ft NAVD88</label>
-        <div class="inputRow">
-          <input id="thresholdNumber" type="number" min="-2" max="14" value="2.55" step="0.05" />
-          <button id="applyThresholdBtn" class="secondary">Apply</button>
-        </div>
-        <input id="threshold" type="range" min="-2" max="14" value="2.55" step="0.05" />
-        <div class="rangeRow">
-          <span>-2 ft</span>
-          <span>14 ft</span>
-        </div>
-        <label for="uncertaintyNumber">Vertical uncertainty, +/- ft</label>
-        <input id="uncertaintyNumber" type="number" min="0" max="3" value="0.50" step="0.05" />
-      </section>
-
-      <section class="panelBlock">
-        <div class="panelTitle">Map <span class="pill">5 ft DEM</span></div>
-        <div class="basemapGrid" aria-label="Basemap">
-          <button data-basemap="current" class="active">Current</button>
-          <button data-basemap="satellite" class="secondary">Satellite</button>
-          <button data-basemap="osm" class="secondary">OSM</button>
-        </div>
-        <div class="legend">
-          <div class="legendRow"><span class="swatch" style="background:#38bdf8"></span> Section</div>
-          <div class="legendRow"><span class="swatch" style="background:#fb7185"></span> Exposed reach</div>
-          <div class="legendRow"><span class="swatch" style="background:#ef4444"></span> Borough</div>
         </div>
       </section>
     </aside>
@@ -704,36 +824,63 @@
         <div class="metricRows">
           <div class="metricRow"><div class="k">Clearance</div><div class="v" id="pointClearance">-</div></div>
           <div class="metricRow"><div class="k">Archive</div><div class="v" id="pointExceedances">-</div></div>
-          <div class="metricRow"><div class="k">Frequency</div><div class="v" id="pointReturn">-</div></div>
         </div>
       </section>
 
-      <section class="panelBlock floodCharts">
-        <div class="panelTitle">Flood History <span class="pill" id="floodBucketPill">0.0 ft</span></div>
-        <div class="floodSummary">
-          <div class="miniStat"><div class="k">Record</div><div class="v" id="recordTide">-</div></div>
-          <div class="miniStat"><div class="k">Flooded</div><div class="v" id="floodArchiveTotal">-</div></div>
-          <div class="miniStat"><div class="k">Outlook</div><div class="v" id="floodOutlook">-</div></div>
-        </div>
-        <div class="tinyChartLabel">
-          <span>Flooding over the years</span>
-          <span class="pill" id="annualFloodMeta">Archive</span>
-        </div>
-        <div class="tinyChartWrap"><canvas id="dotAnnualChart"></canvas></div>
-        <div class="tinyChartLabel">
-          <span>Flooding throughout the year</span>
-          <span class="pill" id="doyFloodMeta">0 years</span>
-        </div>
-        <div class="tinyChartWrap"><canvas id="dotDoyChart"></canvas></div>
-      </section>
     </aside>
 
     <section class="bottomPanel">
-      <div class="chartHeader">
-        <h2 class="chartTitle">Elevation Cross Section</h2>
-        <span class="pill" id="chartStatus">Waiting for a line</span>
+      <div class="bottomGrid">
+        <div class="profilePane">
+          <div class="chartHeader">
+            <h2 class="chartTitle">Cross Section</h2>
+            <div class="chartPills">
+              <span class="pill" id="thresholdPill">2.55 ft NAVD88</span>
+              <span class="pill" id="chartStatus">Waiting for a line</span>
+            </div>
+          </div>
+          <div class="thresholdCompact" aria-label="Water threshold">
+            <button class="minor" data-threshold-preset="2.55">Minor</button>
+            <button class="moderate" data-threshold-preset="3.55">Moderate</button>
+            <button class="major" data-threshold-preset="4.55">Major</button>
+            <div class="thresholdInputRow">
+              <input id="thresholdNumber" type="number" min="-2" max="14" value="2.55" step="0.05" aria-label="Custom stage in feet NAVD88" />
+              <button id="applyThresholdBtn" class="secondary">Apply</button>
+            </div>
+            <input id="threshold" type="range" min="-2" max="14" value="2.55" step="0.05" aria-label="Water threshold in feet NAVD88" />
+            <div class="uncertaintyInline">
+              <span>+/-</span>
+              <input id="uncertaintyNumber" type="number" min="0" max="3" value="0.50" step="0.05" aria-label="Vertical uncertainty in feet" />
+            </div>
+          </div>
+          <div class="chartWrap"><canvas id="profileChart"></canvas></div>
+        </div>
+
+        <aside class="floodPane floodCharts">
+          <div class="panelTitle">Flood History <span class="pill" id="floodBucketPill">0.0 ft</span></div>
+          <div class="scenarioRow" aria-label="Projection scenario">
+            <button data-scenario="low" class="secondary">Low</button>
+            <button data-scenario="intermediate" class="active">Intermediate</button>
+            <button data-scenario="high" class="secondary">High</button>
+          </div>
+          <div class="floodSummary">
+            <div class="miniStat"><div class="k">Record</div><div class="v" id="recordTide">-</div></div>
+            <div class="miniStat"><div class="k">Flooded</div><div class="v" id="floodArchiveTotal">-</div></div>
+            <div class="miniStat"><div class="k">2100</div><div class="v" id="floodOutlook">-</div></div>
+          </div>
+          <div class="tinyChartLabel">
+            <span>Flooding over the years</span>
+            <span class="pill" id="annualFloodMeta">Archive</span>
+          </div>
+          <div class="tinyChartWrap"><canvas id="dotAnnualChart"></canvas></div>
+          <div class="tinyChartLabel">
+            <span>Flooding throughout the year</span>
+            <span class="pill" id="doyFloodMeta">0 years</span>
+          </div>
+          <div class="tinyChartWrap"><canvas id="dotDoyChart"></canvas></div>
+          <p class="modelNote" id="projectionNote"></p>
+        </aside>
       </div>
-      <div class="chartWrap"><canvas id="profileChart"></canvas></div>
     </section>
   </div>
 
@@ -768,7 +915,29 @@
       selectedIndex:null,
       thresholdFt:2.55,
       uncertaintyFt:.5,
-      activeBasemap:"current"
+      activeBasemap:"current",
+      projectionScenario:"intermediate"
+    };
+
+    const PROJECTION_SCENARIOS = {
+      low:{
+        label:"Low",
+        short:"Low",
+        linear:.0237455304,
+        quadratic:-.0000473192
+      },
+      intermediate:{
+        label:"Intermediate",
+        short:"Int.",
+        linear:.030704833,
+        quadratic:.0002079283
+      },
+      high:{
+        label:"High",
+        short:"High",
+        linear:.0559193887,
+        quadratic:.0003384065
+      }
     };
 
     const map = L.map("map", { zoomControl:true, preferCanvas:true });
@@ -836,6 +1005,17 @@
     function fmtCount(v){ return Number.isFinite(v) ? Math.round(v).toLocaleString() : "-"; }
     function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
     function fmtFlood(v, digits=0){ return Number.isFinite(v) ? Number(v).toLocaleString(undefined, { maximumFractionDigits:digits }) : "-"; }
+    function activeScenario(){ return PROJECTION_SCENARIOS[state.projectionScenario] || PROJECTION_SCENARIOS.intermediate; }
+
+    function projectionBaseYear(){
+      return Number(String(state.floodStats?.archive?.endDate || "").slice(0, 4)) || new Date().getFullYear();
+    }
+
+    function scenarioDeltaFt(year){
+      const scenario = activeScenario();
+      const x = Math.max(0, Number(year) - projectionBaseYear());
+      return Math.max(0, scenario.quadratic * x * x + scenario.linear * x);
+    }
 
     function setBasemap(id){
       const next = basemaps[id] ? id : "current";
@@ -850,6 +1030,19 @@
         button.classList.toggle("active", active);
         button.classList.toggle("secondary", !active);
       });
+    }
+
+    function setProjectionScenario(id){
+      const next = PROJECTION_SCENARIOS[id] ? id : "intermediate";
+      state.projectionScenario = next;
+      document.querySelectorAll("[data-scenario]").forEach(button => {
+        const active = button.dataset.scenario === next;
+        button.classList.toggle("active", active);
+        button.classList.toggle("secondary", !active);
+      });
+      state.floodBucketCache.clear();
+      if(state.selectedIndex !== null && state.selectedIndex !== undefined) updateInspection(false);
+      else renderPointFloodProduct(null);
     }
 
     function classifyStage(stageFt){
@@ -960,13 +1153,17 @@
       const records = dailyArchive();
       const peaks = state.floodStats?.dailyPeakNavd88Ft || [];
       if(!records.length || !peaks.length || !Number.isFinite(thresholdFt)) return null;
-      const baseYear = Number(String(state.floodStats?.archive?.endDate || "").slice(0, 4)) || new Date().getFullYear();
-      const trend = Number(state.floodStats?.tideModel?.trendFtPerYear) || 0;
-      const effectiveThreshold = thresholdFt - trend * (Number(year) - baseYear);
+      const scenario = activeScenario();
+      const deltaFt = scenarioDeltaFt(year);
+      const effectiveThreshold = thresholdFt - deltaFt;
       const probability = countDailyExceedances(effectiveThreshold) / peaks.length;
       const range = binomialRange(365.2425, probability);
       return {
         year:Number(year),
+        scenario:state.projectionScenario,
+        scenarioLabel:scenario.label,
+        scenarioShort:scenario.short,
+        seaLevelRiseFt:deltaFt,
         effectiveThreshold,
         probability,
         mean:range.mean,
@@ -988,7 +1185,7 @@
     function buildBucketStats(thresholdFt){
       const threshold = snapStageBucket(thresholdFt);
       if(threshold === null) return null;
-      const key = threshold.toFixed(1);
+      const key = `${threshold.toFixed(1)}|${state.projectionScenario}`;
       if(state.floodBucketCache.has(key)) return state.floodBucketCache.get(key);
 
       const records = dailyArchive();
@@ -1037,22 +1234,33 @@
         .map((value, i) => i <= endIdx ? value : null);
 
       const currentProjection = projectionForThreshold(threshold, lastYear);
+      const projectionYear = 2100;
+      const projection2100 = projectionForThreshold(threshold, projectionYear);
       const forecastMean = new Array(365).fill(null);
       const forecastLow = new Array(365).fill(null);
       const forecastHigh = new Array(365).fill(null);
       for(let i=0; i<365; i++){
         const ratio = avg[364] > 0 ? avg[i] / avg[364] : (i + 1) / 365;
-        forecastMean[i] = currentProjection ? currentProjection.mean * ratio : 0;
-        forecastLow[i] = currentProjection ? currentProjection.low * ratio : 0;
-        forecastHigh[i] = currentProjection ? currentProjection.high * ratio : 0;
+        forecastMean[i] = projection2100 ? projection2100.mean * ratio : 0;
+        forecastLow[i] = projection2100 ? projection2100.low * ratio : 0;
+        forecastHigh[i] = projection2100 ? projection2100.high * ratio : 0;
       }
 
       const annualRows = years.map(year => ({ year, count:annualMap.get(year) || 0 }));
       const futureYears = Array.from({length:2100 - lastYear}, (_, i) => lastYear + i + 1);
       const future = futureYears.map(year => projectionForThreshold(threshold, year)).filter(Boolean);
+      const peaks = state.floodStats?.dailyPeakNavd88Ft || [];
+      const observedRecordFt = peaks.length ? Math.max(...peaks) : null;
+      const modelCeilingFt = Number.isFinite(observedRecordFt) && projection2100
+        ? observedRecordFt + projection2100.seaLevelRiseFt
+        : null;
+      const scenario = activeScenario();
 
       const stats = {
         threshold,
+        scenario:state.projectionScenario,
+        scenarioLabel:scenario.label,
+        scenarioShort:scenario.short,
         records,
         years,
         firstYear,
@@ -1065,6 +1273,10 @@
         max,
         current,
         currentProjection,
+        projectionYear,
+        projection2100,
+        observedRecordFt,
+        modelCeilingFt,
         forecastMean,
         forecastLow,
         forecastHigh,
@@ -1386,6 +1598,9 @@
                       ? `Range: ${fmtFlood(lowValue, 0)} - ${fmtFlood(v, 0)} flood days`
                       : null;
                   }
+                  if(ctx.dataset.label === "Projection"){
+                    return `${bucketStats?.scenarioShort || "Scenario"} projection: ${fmtFlood(v, ctx.dataIndex >= historicalLength ? 1 : 0)} flood days`;
+                  }
                   return `${ctx.dataset.label}: ${fmtFlood(v, ctx.dataIndex >= historicalLength ? 1 : 0)} flood days`;
                 }
               }
@@ -1526,7 +1741,10 @@
                 }
                 if(ctx.dataset.label === "Forecast range"){
                   const low = bucketStats?.forecastLow?.[ctx.dataIndex];
-                  return Number.isFinite(low) ? `Forecast range: ${fmtFlood(low, 0)} - ${fmtFlood(v, 0)}` : null;
+                  return Number.isFinite(low) ? `${bucketStats?.projectionYear || 2100} range: ${fmtFlood(low, 0)} - ${fmtFlood(v, 0)}` : null;
+                }
+                if(ctx.dataset.label === "Projection"){
+                  return `${bucketStats?.projectionYear || 2100} ${bucketStats?.scenarioShort || "projection"}: ${fmtFlood(v, 1)} flood days`;
                 }
                 return `${ctx.dataset.label}: ${fmtFlood(v, 1)} flood days`;
               }
@@ -1542,7 +1760,7 @@
               callback(value){
                 const day = Number(value);
                 const month = MONTH_STARTS.indexOf(day - 1);
-                return month >= 0 ? MONTH_NAMES[month] : "";
+                return [0,3,6,9].includes(month) ? MONTH_NAMES[month] : "";
               }
             },
             grid:{ display:false }
@@ -1572,6 +1790,7 @@
         setText("floodOutlook", "-");
         setText("annualFloodMeta", "Archive");
         setText("doyFloodMeta", "0 years");
+        setText("projectionNote", "");
         renderAnnualFloodChart(null);
         renderDoyFloodChart(null);
         return null;
@@ -1579,9 +1798,14 @@
 
       setText("floodBucketPill", `${bucketStats.threshold.toFixed(1)} ft`);
       setText("floodArchiveTotal", fmtFlood(bucketStats.total, 0));
-      setText("floodOutlook", bucketStats.currentProjection ? fmtFlood(bucketStats.currentProjection.mean, 1) : "-");
-      setText("annualFloodMeta", `${bucketStats.firstYear}-${bucketStats.lastYear}`);
-      setText("doyFloodMeta", `${bucketStats.statsYears.length} yrs`);
+      setText("floodOutlook", bucketStats.projection2100 ? fmtFlood(bucketStats.projection2100.mean, 1) : "-");
+      setText("annualFloodMeta", `${bucketStats.firstYear}-2100`);
+      setText("doyFloodMeta", `${bucketStats.projectionYear} ${bucketStats.scenarioShort}`);
+      const scenarioText = bucketStats.scenarioLabel.toLowerCase();
+      const note = bucketStats.projection2100 && bucketStats.projection2100.mean < .05 && Number.isFinite(bucketStats.modelCeilingFt)
+        ? `No ${bucketStats.scenarioLabel.toLowerCase()} 2100 flood days; modeled ceiling ${bucketStats.modelCeilingFt.toFixed(1)} ft.`
+        : `Archive shifted with ${scenarioText} sea-level rise; bucketed to 0.1 ft.`;
+      setText("projectionNote", note);
       renderAnnualFloodChart(bucketStats);
       renderDoyFloodChart(bucketStats);
       return bucketStats;
@@ -1663,7 +1887,7 @@
       setText("pointClearance", fmtSigned(stats.clearance, 2));
       setText("pointReturn", stats.recurrence);
       setText("pointExceedances", `${fmtCount(stats.exceedances)} days`);
-      if(bucketStats?.currentProjection) setText("floodOutlook", fmtFlood(bucketStats.currentProjection.mean, 1));
+      if(bucketStats?.projection2100) setText("floodOutlook", fmtFlood(bucketStats.projection2100.mean, 1));
 
       const latLng = L.latLng(point.lat, point.lng);
       if(!state.inspectMarker){
@@ -1911,6 +2135,9 @@
     });
     document.querySelectorAll("[data-basemap]").forEach(button => {
       button.addEventListener("click", () => setBasemap(button.dataset.basemap));
+    });
+    document.querySelectorAll("[data-scenario]").forEach(button => {
+      button.addEventListener("click", () => setProjectionScenario(button.dataset.scenario));
     });
 
     map.on("click", event => {
