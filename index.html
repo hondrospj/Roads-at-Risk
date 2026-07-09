@@ -1934,43 +1934,7 @@
     function activeScenario(){ return PROJECTION_SCENARIOS[state.projectionScenario] || PROJECTION_SCENARIOS.intermediate; }
     function setExportStatus(text){ setText("exportStatus", text); }
 
-    function isPaneExpanded(id){
-      return Boolean($("shell")?.classList.contains("paneExpanded") && $(id)?.classList.contains("isExpanded"));
-    }
-
-    function applyChartTypography(chart, expanded){
-      if(!chart?.options) return;
-      const tickSize = expanded ? 16 : 11;
-      const titleSize = expanded ? 18 : 12;
-      const legendSize = expanded ? 17 : 12;
-      const tooltipSize = expanded ? 15 : 12;
-      chart.options.plugins = chart.options.plugins || {};
-      chart.options.plugins.tooltip = {
-        ...(chart.options.plugins.tooltip || {}),
-        titleFont:{ size:tooltipSize, weight:"700" },
-        bodyFont:{ size:tooltipSize },
-        footerFont:{ size:tooltipSize }
-      };
-      if(chart.options.plugins.legend?.labels){
-        chart.options.plugins.legend.labels.font = { size:legendSize, weight:"700" };
-        chart.options.plugins.legend.labels.boxWidth = expanded ? 14 : 8;
-      }
-      for(const axis of Object.values(chart.options.scales || {})){
-        axis.ticks = {
-          ...(axis.ticks || {}),
-          font:{ size:tickSize, weight:expanded ? "700" : "500" }
-        };
-        if(axis.title){
-          axis.title.font = { size:titleSize, weight:"800" };
-        }
-      }
-      chart.update("none");
-    }
-
     function resizeCharts(){
-      applyChartTypography(state.chart, isPaneExpanded("crossSectionPane"));
-      applyChartTypography(state.annualFloodChart, isPaneExpanded("floodHistoryPane"));
-      applyChartTypography(state.doyFloodChart, isPaneExpanded("floodHistoryPane"));
       state.chart?.resize();
       state.annualFloodChart?.resize();
       state.doyFloodChart?.resize();
