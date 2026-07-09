@@ -36,10 +36,10 @@
       --warn:#fbbf24;
       --ok:#34d399;
       --ink:#07111f;
-      --shadow:0 14px 34px rgba(0,0,0,.34);
+      --shadow:0 10px 26px rgba(5,10,20,.28);
       --right-rail:320px;
       --ui-gap:16px;
-      --cross-section-h:clamp(300px, 32vh, 380px);
+      --cross-section-h:clamp(292px, 30vh, 340px);
     }
 
     *{box-sizing:border-box}
@@ -70,20 +70,20 @@
       position:absolute;
       top:50%;
       left:clamp(18px, 8vw, 150px);
-      width:min(26vw, 300px);
+      width:min(24vw, 280px);
       transform:translateY(-50%);
       display:flex;
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      gap:8px;
-      min-height:48px;
-      padding:10px 12px;
-      border-radius:12px;
-      background:rgba(10,15,25,.42);
-      box-shadow:0 8px 20px rgba(0,0,0,.18);
-      border:1px solid rgba(255,255,255,.08);
-      backdrop-filter:blur(8px);
+      gap:7px;
+      min-height:46px;
+      padding:9px 11px;
+      border-radius:10px;
+      background:rgba(10,15,25,.28);
+      box-shadow:0 8px 20px rgba(0,0,0,.12);
+      border:1px solid rgba(255,255,255,.06);
+      backdrop-filter:blur(6px);
       pointer-events:none;
       text-align:center;
     }
@@ -103,7 +103,7 @@
 
     h1{
       margin:0;
-      font-size:28px;
+      font-size:26px;
       line-height:1;
       white-space:nowrap;
       font-weight:950;
@@ -160,25 +160,25 @@
       left:auto;
       right:var(--ui-gap);
       bottom:var(--ui-gap);
-      width:min(940px, calc(50vw - 24px));
+      width:min(860px, calc(48vw - 20px));
       min-width:640px;
       height:var(--cross-section-h);
-      padding:12px;
+      padding:10px;
       position:absolute;
-      border-radius:14px;
-      background:rgba(15,23,42,.92);
+      border-radius:10px;
+      background:rgba(15,23,42,.90);
       border:1px solid rgba(255,255,255,.13);
       box-shadow:var(--shadow);
       backdrop-filter:blur(14px);
     }
 
     .panelBlock{
-      border-radius:12px;
+      border-radius:10px;
       border:1px solid rgba(255,255,255,.13);
-      background:rgba(15,23,42,.91);
-      box-shadow:0 12px 30px rgba(0,0,0,.30);
-      backdrop-filter:blur(12px);
-      padding:11px;
+      background:rgba(15,23,42,.90);
+      box-shadow:0 10px 24px rgba(0,0,0,.24);
+      backdrop-filter:blur(10px);
+      padding:10px;
       margin-bottom:10px;
     }
 
@@ -525,8 +525,8 @@
     .bottomGrid{
       height:100%;
       display:grid;
-      grid-template-columns:minmax(0,1.35fr) minmax(250px,.82fr);
-      gap:12px;
+      grid-template-columns:minmax(0,1fr) 248px;
+      gap:10px;
     }
 
     .profilePane,
@@ -560,7 +560,7 @@
     }
 
     .tinyChartWrap{
-      height:clamp(42px, 6vh, 76px);
+      height:clamp(42px, 5vh, 58px);
       width:100%;
     }
 
@@ -592,6 +592,42 @@
       width:236px;
       margin:0;
       padding:7px;
+    }
+
+    @media (min-width: 1500px) and (min-height: 820px){
+      :root{
+        --right-rail:340px;
+        --cross-section-h:clamp(310px, 29vh, 340px);
+      }
+
+      .titleBar{
+        left:clamp(20px, 8vw, 165px);
+        width:280px;
+        background:rgba(10,15,25,.24);
+      }
+
+      .mapControl{
+        top:18px;
+        right:var(--ui-gap);
+        width:var(--right-rail);
+      }
+
+      .rightPanel{
+        top:82px;
+        width:var(--right-rail);
+      }
+
+      .leftPanel{
+        top:auto;
+        bottom:calc(var(--cross-section-h) + 32px);
+        width:var(--right-rail);
+        transform:none;
+      }
+
+      .bottomPanel{
+        width:min(860px, calc(44vw - 16px));
+        min-width:760px;
+      }
     }
 
     .scenarioRow{
@@ -869,12 +905,12 @@
             <div class="miniStat"><div class="k">2100</div><div class="v" id="floodOutlook">-</div></div>
           </div>
           <div class="tinyChartLabel">
-            <span>Flooding over the years</span>
+            <span>Flood days by year</span>
             <span class="pill" id="annualFloodMeta">Archive</span>
           </div>
           <div class="tinyChartWrap"><canvas id="dotAnnualChart"></canvas></div>
           <div class="tinyChartLabel">
-            <span>Flooding throughout the year</span>
+            <span>Seasonal pattern</span>
             <span class="pill" id="doyFloodMeta">0 years</span>
           </div>
           <div class="tinyChartWrap"><canvas id="dotDoyChart"></canvas></div>
