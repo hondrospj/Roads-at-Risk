@@ -1928,7 +1928,7 @@
     }
 
     function countDailyExceedances(stageFt){
-      return empiricalExceedance(stageFt).exceedances;
+      return empiricalExceedance(stageFt).observedExceedances;
     }
 
     function recurrenceText(stageFt){
@@ -2013,18 +2013,33 @@
         .sort((a, b) => a - b);
     }
 
-    function empiricalExceedance(stageFt, sortedValues=presentPeakDistribution()){
+    function empiricalExceedance(stageFt, sortedValues=presentPeakDistribution(), smooth=false){
       const n = sortedValues.length;
       if(!n || !Number.isFinite(stageFt)){
-        return { count:n, exceedances:0, cdf:0, survival:0 };
+        return { count:n, observedExceedances:0, exceedances:0, cdf:0, survival:0 };
       }
       const idx = lowerBound(sortedValues, stageFt);
-      const exceedances = n - idx;
+      const observedExceedances = n - idx;
+      let cdf = idx / n;
+      if(smooth && n > 1){
+        if(stageFt <= sortedValues[0]){
+          cdf = 0;
+        }else if(stageFt > sortedValues[n - 1]){
+          cdf = 1;
+        }else{
+          const prev = sortedValues[Math.max(0, idx - 1)];
+          const next = sortedValues[Math.min(n - 1, idx)];
+          const t = next > prev ? (stageFt - prev) / (next - prev) : 0;
+          cdf = clamp((idx + t) / n, 0, 1);
+        }
+      }
+      const survival = clamp(1 - cdf, 0, 1);
       return {
         count:n,
-        exceedances,
-        cdf:idx / n,
-        survival:exceedances / n
+        observedExceedances,
+        exceedances:smooth ? survival * n : observedExceedances,
+        cdf,
+        survival
       };
     }
 
@@ -2058,7 +2073,7 @@
       const scenario = activeScenario();
       const deltaFt = scenarioDeltaFt(year);
       const effectiveThreshold = thresholdFt - deltaFt;
-      const distribution = empiricalExceedance(effectiveThreshold, presentPeaks);
+      const distribution = empiricalExceedance(effectiveThreshold, presentPeaks, true);
       const probability = distribution.survival;
       const range = binomialRange(365.2425, probability);
       return {
@@ -2089,6 +2104,17 @@
       return out;
     }
 
+    function projectedSeasonalRatio(effectiveThreshold){
+      const daily = new Array(365).fill(0);
+      for(const row of presentRebasedArchive()){
+        const idx = doyIndex(row.date);
+        if(idx !== null && row.presentPeakFt >= effectiveThreshold) daily[idx] += 1;
+      }
+      const total = daily.reduce((sum, value) => sum + value, 0);
+      if(!total) return new Array(365).fill(0);
+      return cumulativeSeriesFromDaily(daily).map(value => value / total);
+    }
+
     function buildBucketStats(thresholdFt){
       const threshold = snapStageBucket(thresholdFt);
       if(threshold === null) return null;
@@ -2099,7 +2125,7 @@
       const years = archiveYearRange(records);
       if(!records.length || !years.length) return null;
       const presentPeaks = presentPeakDistribution();
-      const presentDistribution = empiricalExceedance(threshold, presentPeaks);
+      const presentDistribution = empiricalExceedance(threshold, presentPeaks, false);
       const baseYear = projectionBaseYear();
 
       const annualMap = new Map(years.map(year => [year, 0]));
@@ -2149,8 +2175,11 @@
       const forecastMean = new Array(365).fill(null);
       const forecastLow = new Array(365).fill(null);
       const forecastHigh = new Array(365).fill(null);
+      const projectionSeasonalRatio = projection2100
+        ? projectedSeasonalRatio(projection2100.effectiveThreshold)
+        : new Array(365).fill(0);
       for(let i=0; i<365; i++){
-        const ratio = avg[364] > 0 ? avg[i] / avg[364] : (i + 1) / 365;
+        const ratio = projectionSeasonalRatio[i] || 0;
         forecastMean[i] = projection2100 ? projection2100.mean * ratio : 0;
         forecastLow[i] = projection2100 ? projection2100.low * ratio : 0;
         forecastHigh[i] = projection2100 ? projection2100.high * ratio : 0;
