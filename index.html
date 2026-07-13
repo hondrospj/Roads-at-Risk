@@ -1192,15 +1192,6 @@
       height:auto;
     }
 
-    .seasonLabel,
-    .seasonChartWrap{
-      display:flex;
-    }
-
-    .seasonChartWrap{
-      display:block;
-    }
-
     .modelNote{
       display:none;
     }
@@ -1556,7 +1547,7 @@
     .shell.paneExpanded .floodHistoryPane .floodPane{
       flex:1 1 auto;
       display:grid;
-      grid-template-rows:auto auto minmax(0,1fr) auto minmax(0,1fr);
+      grid-template-rows:auto auto minmax(0,1fr);
       overflow:hidden;
       padding-bottom:4px;
     }
@@ -1574,14 +1565,6 @@
     .shell.paneExpanded .tinyChartLabel{
       margin:9px 0 6px;
       font-size:15px;
-    }
-
-    .shell.paneExpanded .floodHistoryPane .seasonLabel{
-      display:flex;
-    }
-
-    .shell.paneExpanded .floodHistoryPane .seasonChartWrap{
-      display:block;
     }
 
     .shell.paneExpanded .exportPane{
@@ -1641,12 +1624,8 @@
       .lineUtility,
       .exportStatus{display:none}
       .shell.paneExpanded .exportPane .lineUtility{display:grid}
-      .shell.paneExpanded .floodHistoryPane .seasonLabel{display:flex}
-      .shell.paneExpanded .floodHistoryPane .seasonChartWrap{display:block}
-      .annualChartWrap,
-      .seasonChartWrap{flex:1 1 70px;min-height:70px}
-      .shell.paneExpanded .floodHistoryPane .annualChartWrap,
-      .shell.paneExpanded .floodHistoryPane .seasonChartWrap{min-height:0}
+      .annualChartWrap{flex:1 1 70px;min-height:70px}
+      .shell.paneExpanded .floodHistoryPane .annualChartWrap{min-height:0}
       .exportPane{padding:8px}
       .exportColumn{gap:5px}
       .exportColumnTitle{font-size:11px}
@@ -1863,11 +1842,6 @@
             <div class="chartKey" id="annualFloodKey" aria-label="Flood days by year key"></div>
           </div>
           <div class="tinyChartWrap annualChartWrap"><canvas id="dotAnnualChart"></canvas></div>
-          <div class="tinyChartLabel seasonLabel">
-            <span>Seasonal pattern</span>
-            <div class="chartKey" id="doyFloodKey" aria-label="Seasonal pattern key"></div>
-          </div>
-          <div class="tinyChartWrap seasonChartWrap"><canvas id="dotDoyChart"></canvas></div>
           <p class="modelNote" id="projectionNote"></p>
         </aside>
       </section>
@@ -1942,7 +1916,6 @@
       profile:[],
       chart:null,
       annualFloodChart:null,
-      doyFloodChart:null,
       floodBucketCache:new Map(),
       hillshadeOverlay:null,
       savedLines:[],
@@ -2138,7 +2111,6 @@
     function resizeCharts(){
       state.chart?.resize();
       state.annualFloodChart?.resize();
-      state.doyFloodChart?.resize();
     }
 
     function updateHillshadeOpacity(){
@@ -2317,7 +2289,6 @@
       return `Nearest top event: #${nearest.rank}, ${nearest.displayDate}, ${nearest.heightNavd88Ft.toFixed(2)} ft NAVD88.`;
     }
 
-    const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     const MONTH_STARTS = [0,31,59,90,120,151,181,212,243,273,304,334];
 
     function dateParts(dateText){
@@ -2334,10 +2305,6 @@
       if(start === undefined) return null;
       const idx = start + parts.day - 1;
       return idx >= 0 && idx < 365 ? idx : null;
-    }
-
-    function monthNameFromIndex(index){
-      return MONTH_NAMES[index] || "";
     }
 
     function snapStageBucket(stageFt){
@@ -2459,27 +2426,6 @@
       };
     }
 
-    function cumulativeSeriesFromDaily(daily){
-      const out = new Array(365).fill(0);
-      let run = 0;
-      for(let i=0; i<365; i++){
-        run += Number(daily[i]) || 0;
-        out[i] = run;
-      }
-      return out;
-    }
-
-    function projectedSeasonalRatio(effectiveThreshold){
-      const daily = new Array(365).fill(0);
-      for(const row of presentRebasedArchive()){
-        const idx = doyIndex(row.date);
-        if(idx !== null && row.presentPeakFt >= effectiveThreshold) daily[idx] += 1;
-      }
-      const total = daily.reduce((sum, value) => sum + value, 0);
-      if(!total) return new Array(365).fill(0);
-      return cumulativeSeriesFromDaily(daily).map(value => value / total);
-    }
-
     function buildBucketStats(thresholdFt){
       const threshold = snapStageBucket(thresholdFt);
       if(threshold === null) return null;
@@ -2494,69 +2440,22 @@
       const baseYear = projectionBaseYear();
 
       const annualMap = new Map(years.map(year => [year, 0]));
-      const dailyByYear = new Map(years.map(year => [year, new Array(365).fill(0)]));
 
       for(const row of records){
         const parts = dateParts(row.date);
-        const idx = doyIndex(row.date);
-        if(!parts || idx === null) continue;
+        if(!parts) continue;
         if(row.peakFt >= threshold){
           annualMap.set(parts.year, (annualMap.get(parts.year) || 0) + 1);
-          const daily = dailyByYear.get(parts.year);
-          if(daily) daily[idx] += 1;
         }
       }
 
       const firstYear = years[0];
       const lastYear = years[years.length - 1];
-      const completeYears = years.filter(year => year > firstYear && year < lastYear);
-      const statsYears = completeYears.length ? completeYears : years;
-      const cumulativeByYear = years.map(year => ({
-        year,
-        cumulative:cumulativeSeriesFromDaily(dailyByYear.get(year) || new Array(365).fill(0))
-      }));
-
-      const avg = new Array(365).fill(0);
-      const min = new Array(365).fill(0);
-      const max = new Array(365).fill(0);
-      for(let i=0; i<365; i++){
-        const values = statsYears.map(year => {
-          const row = cumulativeByYear.find(item => item.year === year);
-          return row ? row.cumulative[i] : 0;
-        });
-        const sum = values.reduce((acc, value) => acc + value, 0);
-        avg[i] = values.length ? sum / values.length : 0;
-        min[i] = values.length ? Math.min(...values) : 0;
-        max[i] = values.length ? Math.max(...values) : 0;
-      }
-
-      const endIdx = doyIndex(state.floodStats?.archive?.endDate) ?? 364;
-      const current = (cumulativeByYear.find(item => item.year === lastYear)?.cumulative || new Array(365).fill(0))
-        .map((value, i) => i <= endIdx ? value : null);
-
-      const currentProjection = projectionForThreshold(threshold, baseYear);
-      const projectionYear = 2100;
-      const projection2100 = projectionForThreshold(threshold, projectionYear);
-      const forecastMean = new Array(365).fill(null);
-      const forecastLow = new Array(365).fill(null);
-      const forecastHigh = new Array(365).fill(null);
-      const projectionSeasonalRatio = projection2100
-        ? projectedSeasonalRatio(projection2100.effectiveThreshold)
-        : new Array(365).fill(0);
-      for(let i=0; i<365; i++){
-        const ratio = projectionSeasonalRatio[i] || 0;
-        forecastMean[i] = projection2100 ? projection2100.mean * ratio : 0;
-        forecastLow[i] = projection2100 ? projection2100.low * ratio : 0;
-        forecastHigh[i] = projection2100 ? projection2100.high * ratio : 0;
-      }
+      const projection2100 = projectionForThreshold(threshold, 2100);
 
       const annualRows = years.map(year => ({ year, count:annualMap.get(year) || 0 }));
       const futureYears = Array.from({length:2100 - baseYear}, (_, i) => baseYear + i + 1);
       const future = futureYears.map(year => projectionForThreshold(threshold, year)).filter(Boolean);
-      const observedRecordFt = presentPeaks.length ? Math.max(...presentPeaks) : null;
-      const modelCeilingFt = Number.isFinite(observedRecordFt) && projection2100
-        ? observedRecordFt + projection2100.seaLevelRiseFt
-        : null;
       const scenario = activeScenario();
 
       const stats = {
@@ -2569,22 +2468,9 @@
         firstYear,
         lastYear,
         baseYear,
-        statsYears,
         annualRows,
-        cumulativeByYear,
-        avg,
-        min,
-        max,
-        current,
-        currentProjection,
-        projectionYear,
         projection2100,
         presentDistribution,
-        observedRecordFt,
-        modelCeilingFt,
-        forecastMean,
-        forecastLow,
-        forecastHigh,
         future,
         total:presentDistribution.exceedances
       };
@@ -3039,180 +2925,6 @@
       resizeCharts();
     }
 
-    function renderDoyFloodChart(bucketStats){
-      const canvas = $("dotDoyChart");
-      if(!canvas) return;
-      const fonts = chartFontSizes("floodHistoryPane");
-      const labels = Array.from({length:365}, (_, i) => i + 1);
-      const data = {
-        labels,
-        datasets:[
-          {
-            label:"Range floor",
-            legendHidden:true,
-            legendGroup:"historicRange",
-            data:bucketStats?.min || [],
-            borderWidth:0,
-            pointRadius:0,
-            backgroundColor:"rgba(148,163,184,0)",
-            borderColor:"rgba(148,163,184,0)",
-            fill:false,
-            order:40
-          },
-          {
-            label:"Historic range",
-            keyLabel:"Historic band",
-            legendGroup:"historicRange",
-            data:bucketStats?.max || [],
-            legendColor:"rgba(148,163,184,.44)",
-            borderWidth:0,
-            pointRadius:0,
-            backgroundColor:"rgba(148,163,184,.18)",
-            borderColor:"rgba(148,163,184,0)",
-            fill:"-1",
-            order:39
-          },
-          {
-            label:"Average",
-            data:bucketStats?.avg || [],
-            legendColor:"rgba(255,255,255,.90)",
-            borderColor:"rgba(255,255,255,.90)",
-            backgroundColor:"rgba(255,255,255,.90)",
-            borderWidth:fonts.line,
-            pointRadius:0,
-            pointHitRadius:8,
-            tension:.22,
-            order:30
-          },
-          {
-            label:"Current",
-            data:bucketStats?.current || [],
-            legendColor:"rgba(251,113,133,.95)",
-            borderColor:"rgba(251,113,133,.95)",
-            backgroundColor:"rgba(251,113,133,.95)",
-            borderWidth:fonts.line + .8,
-            pointRadius:0,
-            pointHitRadius:8,
-            stepped:"after",
-            tension:0,
-            order:20
-          },
-          {
-            label:"Forecast low",
-            legendHidden:true,
-            legendGroup:"seasonForecastRange",
-            data:bucketStats?.forecastLow || [],
-            borderWidth:0,
-            pointRadius:0,
-            backgroundColor:"rgba(251,191,36,0)",
-            borderColor:"rgba(251,191,36,0)",
-            fill:false,
-            order:18
-          },
-          {
-            label:"Forecast range",
-            keyLabel:"Forecast band",
-            legendGroup:"seasonForecastRange",
-            data:bucketStats?.forecastHigh || [],
-            legendColor:"rgba(251,191,36,.44)",
-            borderWidth:0,
-            pointRadius:0,
-            backgroundColor:"rgba(251,191,36,.14)",
-            borderColor:"rgba(251,191,36,0)",
-            fill:"-1",
-            order:17
-          },
-          {
-            label:"Projection",
-            data:bucketStats?.forecastMean || [],
-            legendColor:"rgba(251,191,36,.96)",
-            borderColor:"rgba(251,191,36,.96)",
-            backgroundColor:"rgba(251,191,36,.96)",
-            borderDash:[7,5],
-            borderWidth:fonts.line,
-            pointRadius:0,
-            pointHitRadius:8,
-            tension:.22,
-            order:16
-          }
-        ]
-      };
-      const options = {
-        responsive:true,
-        maintainAspectRatio:false,
-        animation:false,
-        interaction:{mode:"index", intersect:false},
-        plugins:{
-          legend:{ display:false },
-          tooltip:{
-            titleFont:{ size:fonts.tooltip, weight:"800" },
-            bodyFont:{ size:fonts.tooltip },
-            callbacks:{
-              title(items){
-                const idx = Number(items?.[0]?.label) - 1;
-                let monthIndex = 0;
-                for(let i=0; i<MONTH_STARTS.length; i++){
-                  if(idx >= MONTH_STARTS[i]) monthIndex = i;
-                }
-                const day = idx - MONTH_STARTS[monthIndex] + 1;
-                return `${monthNameFromIndex(monthIndex)} ${day}`;
-              },
-              label(ctx){
-                const v = ctx.parsed?.y;
-                if(!Number.isFinite(v)) return null;
-                if(ctx.dataset.label === "Range floor" || ctx.dataset.label === "Forecast low") return null;
-                if(ctx.dataset.label === "Historic range"){
-                  const low = bucketStats?.min?.[ctx.dataIndex];
-                  return Number.isFinite(low) ? `Historic range: ${fmtFlood(low, 0)} - ${fmtFlood(v, 0)}` : null;
-                }
-                if(ctx.dataset.label === "Forecast range"){
-                  const low = bucketStats?.forecastLow?.[ctx.dataIndex];
-                  return Number.isFinite(low) ? `${bucketStats?.projectionYear || 2100} range: ${fmtFlood(low, 0)} - ${fmtFlood(v, 0)}` : null;
-                }
-                if(ctx.dataset.label === "Projection"){
-                  return `${bucketStats?.projectionYear || 2100} ${bucketStats?.scenarioShort || "projection"}: ${fmtFlood(v, 1)} flood days`;
-                }
-                return `${ctx.dataset.label}: ${fmtFlood(v, 1)} flood days`;
-              }
-            }
-          }
-        },
-        scales:{
-          x:{
-            ticks:{
-              color:"#9fb0d1",
-              maxRotation:0,
-              autoSkip:false,
-              font:{ size:fonts.tick, weight:"700" },
-              callback(value){
-                const day = Number(value);
-                const month = MONTH_STARTS.indexOf(day - 1);
-                return [0,3,6,9].includes(month) ? MONTH_NAMES[month] : "";
-              }
-            },
-            grid:{ display:false }
-          },
-          y:{
-            beginAtZero:true,
-            ticks:{ color:"#9fb0d1", precision:0, maxTicksLimit:4, font:{ size:fonts.tick, weight:"700" } },
-            grid:{ color:"rgba(148,163,184,.12)" }
-          }
-        }
-      };
-
-      if(state.doyFloodChart){
-        const visibility = chartVisibility(state.doyFloodChart);
-        state.doyFloodChart.data = data;
-        state.doyFloodChart.options = options;
-        restoreChartVisibility(state.doyFloodChart, visibility);
-        state.doyFloodChart.update("none");
-      }else{
-        state.doyFloodChart = new Chart(canvas, { type:"line", data, options });
-      }
-      renderChartKey(state.doyFloodChart, "doyFloodKey");
-      resizeCharts();
-    }
-
     function renderPointFloodProduct(stageFt){
       const bucketStats = buildBucketStats(stageFt);
       if(!bucketStats){
@@ -3220,10 +2932,8 @@
         setText("floodArchiveTotal", "-");
         setText("floodOutlook", "-");
         setText("annualFloodMeta", "Archive");
-        setText("doyFloodMeta", "0 years");
         setText("projectionNote", "");
         renderAnnualFloodChart(null);
-        renderDoyFloodChart(null);
         return null;
       }
 
@@ -3231,10 +2941,8 @@
       setText("floodArchiveTotal", fmtFlood(bucketStats.total, 0));
       setText("floodOutlook", bucketStats.projection2100 ? fmtFlood(bucketStats.projection2100.mean, 1) : "-");
       setText("annualFloodMeta", `${bucketStats.firstYear}-2100`);
-      setText("doyFloodMeta", `${bucketStats.projectionYear} ${bucketStats.scenarioShort}`);
       setText("projectionNote", "");
       renderAnnualFloodChart(bucketStats);
-      renderDoyFloodChart(bucketStats);
       return bucketStats;
     }
 
