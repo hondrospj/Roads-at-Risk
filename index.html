@@ -19,6 +19,8 @@
   ></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://unpkg.com/@mapbox/shp-write@0.4.3/shpwrite.js"></script>
 
   <style>
     :root{
@@ -977,8 +979,11 @@
       bottom:var(--ui-gap);
       width:var(--right-rail);
       display:grid;
-      grid-template-rows:minmax(320px, 1.72fr) minmax(230px, 1.12fr) minmax(88px, .36fr);
+      grid-template-rows:minmax(420px, 1.65fr) minmax(270px, 1.08fr) minmax(155px, .6fr);
       gap:10px;
+      overflow-y:auto;
+      overscroll-behavior:contain;
+      scrollbar-gutter:stable;
       z-index:520;
     }
 
@@ -1155,6 +1160,7 @@
     .floodPane{
       display:flex;
       flex-direction:column;
+      flex:1 1 auto;
       min-height:0;
       padding:0;
       border:0;
@@ -1306,8 +1312,25 @@
 
     .exportActions{
       display:grid;
-      grid-template-columns:1fr 1fr;
+      grid-template-columns:1fr;
       gap:6px;
+    }
+
+    .exportFormatRow{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) minmax(74px,.55fr);
+      gap:6px;
+    }
+
+    .exportFormatRow select{
+      min-width:0;
+      min-height:32px;
+      padding:6px 26px 6px 8px;
+      border:1px solid rgba(147,197,253,.30);
+      border-radius:9px;
+      background:#111b2d;
+      color:#edf6ff;
+      font:900 10px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
     }
 
     .exportStatus{
@@ -1351,6 +1374,7 @@
       inset:var(--ui-gap);
       width:auto;
       grid-template-rows:1fr;
+      overflow:hidden;
       z-index:900;
     }
 
@@ -1525,13 +1549,21 @@
       height:13px;
     }
 
-    .shell.paneExpanded .floodHistoryPane .tinyChartWrap{
-      min-height:300px;
+    .shell.paneExpanded .floodHistoryPane{
+      overflow:hidden;
     }
 
-    .shell.paneExpanded .floodHistoryPane .annualChartWrap,
-    .shell.paneExpanded .floodHistoryPane .seasonChartWrap{
-      flex:1 1 0;
+    .shell.paneExpanded .floodHistoryPane .floodPane{
+      flex:1 1 auto;
+      display:grid;
+      grid-template-rows:auto auto minmax(0,1fr) auto minmax(0,1fr);
+      overflow:hidden;
+      padding-bottom:4px;
+    }
+
+    .shell.paneExpanded .floodHistoryPane .tinyChartWrap{
+      min-height:0;
+      height:auto;
     }
 
     .shell.paneExpanded .scenarioRow{
@@ -1613,6 +1645,8 @@
       .shell.paneExpanded .floodHistoryPane .seasonChartWrap{display:block}
       .annualChartWrap,
       .seasonChartWrap{flex:1 1 70px;min-height:70px}
+      .shell.paneExpanded .floodHistoryPane .annualChartWrap,
+      .shell.paneExpanded .floodHistoryPane .seasonChartWrap{min-height:0}
       .exportPane{padding:8px}
       .exportColumn{gap:5px}
       .exportColumnTitle{font-size:11px}
@@ -1672,6 +1706,8 @@
       .rightStack{
         display:grid;
         grid-template-rows:auto auto auto;
+        overflow:visible;
+        scrollbar-gutter:auto;
       }
 
       .toolPane{
@@ -1857,13 +1893,20 @@
           <div class="exportColumn">
             <div class="exportColumnTitle">
               <span>Export</span>
-              <span class="pill">PNG / CSV</span>
+              <span class="pill">CSV / SHP</span>
             </div>
             <div class="exportActions">
-              <button id="screenshotBtn" type="button">Screenshot</button>
-              <button id="exportBtn" class="secondary" type="button">CSV</button>
+              <button id="screenshotBtn" type="button">Screenshot (PNG)</button>
+              <div class="exportFormatRow">
+                <select id="exportFormat" aria-label="Cross section export format">
+                  <option value="csv">CSV</option>
+                  <option value="shp">Shapefile (SHP)</option>
+                  <option value="both">CSV + SHP</option>
+                </select>
+                <button id="exportBtn" class="secondary" type="button">Export</button>
+              </div>
             </div>
-            <p class="exportStatus" id="exportStatus">Save a named section, export the selected CSV, or download a screenshot.</p>
+            <p class="exportStatus" id="exportStatus">Saved lines remain visible together. Choose CSV, SHP, or both for export.</p>
           </div>
         </div>
       </section>
@@ -1893,6 +1936,8 @@
       markers:[],
       line:null,
       riskLine:null,
+      savedLineLayers:null,
+      activeSavedLineId:null,
       inspectMarker:null,
       profile:[],
       chart:null,
@@ -1967,6 +2012,8 @@
     }).addTo(map);
 
     const hillshadeLayerGroup = L.layerGroup().addTo(map);
+    const savedLineLayerGroup = L.layerGroup().addTo(map);
+    state.savedLineLayers = new Map();
 
     function $(id){ return document.getElementById(id); }
     function setText(id, text){ const el = $(id); if(el) el.textContent = text; }
@@ -2147,7 +2194,7 @@
 
       const update = () => {
         const container = control.getContainer();
-        if(!container) return;
+        if(!container || !map._loaded) return;
         const bar = container.querySelector(".dualScaleBar");
         const label = container.querySelector(".dualScaleLabel");
         const size = map.getSize();
@@ -2165,7 +2212,7 @@
         label.textContent = `${feetLabel} ft / ${(feet / 5280).toFixed(milesDigits)} mi`;
       };
 
-      map.on("zoom move resize", update);
+      map.on("load zoom move resize", update);
       window.setTimeout(update, 0);
     }
 
@@ -3331,9 +3378,11 @@
       state.line = null;
       state.riskLine = null;
       state.profile = [];
+      state.activeSavedLineId = null;
       resetInspection();
       updateStats([]);
       renderChart([]);
+      renderSavedLines();
       setText("chartStatus", "Waiting for a line");
     }
 
@@ -3346,8 +3395,10 @@
       });
     }
 
-    function drawSection(a, b, fit=false){
+    function drawSection(a, b, fit=false, savedLineId=null){
       clearSection();
+      state.activeSavedLineId = savedLineId;
+      renderSavedLines();
       state.markers = [
         L.marker(a, { icon:markerIcon(), draggable:true, zIndexOffset:2000, title:"Section endpoint" }).addTo(map),
         L.marker(b, { icon:markerIcon(), draggable:true, zIndexOffset:2000, title:"Section endpoint" }).addTo(map)
@@ -3410,29 +3461,133 @@
       );
     }
 
-    function exportCsv(){
-      if(!state.profile.length) return;
-      const lines = [
-        "distance_ft,elevation_ft_navd88,threshold_ft_navd88,clearance_ft,latitude,longitude",
-        ...state.profile.map(p => [
-          p.distanceFt.toFixed(2),
-          Number.isFinite(p.elevationFt) ? p.elevationFt.toFixed(3) : "",
-          state.thresholdFt.toFixed(3),
-          Number.isFinite(p.elevationFt) ? (p.elevationFt - state.thresholdFt).toFixed(3) : "",
-          p.lat.toFixed(8),
-          p.lng.toFixed(8)
-        ].join(","))
-      ];
-      const blob = new Blob([lines.join("\\n") + "\\n"], { type:"text/csv" });
+    function csvCell(value){
+      const text = String(value ?? "");
+      return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+    }
+
+    function exportLineRecords(){
+      const records = state.savedLines.map(line => ({
+        id:line.id,
+        name:line.name || "Saved line",
+        thresholdFt:Number.isFinite(line.thresholdFt) ? line.thresholdFt : state.thresholdFt,
+        createdAt:line.createdAt || "",
+        a:L.latLng(line.a.lat, line.a.lng),
+        b:L.latLng(line.b.lat, line.b.lng)
+      }));
+      const active = currentLineLatLngs();
+      if(active && !state.activeSavedLineId){
+        records.unshift({
+          id:"active-line",
+          name:"Active line",
+          thresholdFt:state.thresholdFt,
+          createdAt:"",
+          a:active[0],
+          b:active[1]
+        });
+      }
+      return records;
+    }
+
+    function csvForLines(records){
+      const rows = [[
+        "section_id","section_name","point_index","distance_ft","elevation_ft_navd88",
+        "threshold_ft_navd88","clearance_ft","latitude","longitude"
+      ]];
+      for(const record of records){
+        const profile = buildProfile(record.a, record.b);
+        profile.forEach((point, pointIndex) => rows.push([
+          record.id,
+          record.name,
+          pointIndex,
+          point.distanceFt.toFixed(2),
+          Number.isFinite(point.elevationFt) ? point.elevationFt.toFixed(3) : "",
+          record.thresholdFt.toFixed(3),
+          Number.isFinite(point.elevationFt) ? (point.elevationFt - record.thresholdFt).toFixed(3) : "",
+          point.lat.toFixed(8),
+          point.lng.toFixed(8)
+        ]));
+      }
+      return rows.map(row => row.map(csvCell).join(",")).join("\r\n") + "\r\n";
+    }
+
+    function shapefileGeoJson(records){
+      return {
+        type:"FeatureCollection",
+        features:records.map(record => ({
+          type:"Feature",
+          geometry:{
+            type:"LineString",
+            coordinates:[[record.a.lng, record.a.lat], [record.b.lng, record.b.lat]]
+          },
+          properties:{
+            section_id:record.id,
+            name:record.name,
+            thresh_ft:Number(record.thresholdFt.toFixed(3)),
+            length_ft:Number((map.distance(record.a, record.b) * FT_PER_M).toFixed(2)),
+            created:record.createdAt ? record.createdAt.slice(0, 10) : ""
+          }
+        }))
+      };
+    }
+
+    function downloadBlob(blob, filename){
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "roads-at-risk-cross-section.csv";
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       a.remove();
-      URL.revokeObjectURL(url);
-      setExportStatus("CSV exported for the active cross section.");
+      window.setTimeout(() => URL.revokeObjectURL(url), 30000);
+    }
+
+    async function shapefileArchive(records){
+      if(!window.shpwrite?.zip) throw new Error("Shapefile export library did not load.");
+      return window.shpwrite.zip(shapefileGeoJson(records), {
+        folder:"roads_at_risk_cross_sections",
+        outputType:"arraybuffer",
+        compression:"STORE",
+        types:{ polyline:"cross_sections" }
+      });
+    }
+
+    async function exportSections(){
+      const records = exportLineRecords();
+      if(!records.length){
+        setExportStatus("Draw or save at least one cross section before exporting.");
+        return;
+      }
+      if(!state.raster){
+        setExportStatus("Wait for the DEM to finish loading before exporting.");
+        return;
+      }
+      const format = $("exportFormat")?.value || "csv";
+      const button = $("exportBtn");
+      button.disabled = true;
+      setExportStatus(`Preparing ${format === "shp" ? "SHP" : format.toUpperCase()} for ${records.length} cross section${records.length === 1 ? "" : "s"}...`);
+      try{
+        if(format === "csv"){
+          downloadBlob(new Blob([csvForLines(records)], { type:"text/csv;charset=utf-8" }), "roads-at-risk-cross-sections.csv");
+        }else{
+          const shpZip = await shapefileArchive(records);
+          if(format === "shp"){
+            downloadBlob(new Blob([shpZip], { type:"application/zip" }), "roads-at-risk-cross-sections-shp.zip");
+          }else{
+            if(!window.JSZip) throw new Error("ZIP library did not load.");
+            const zip = await window.JSZip.loadAsync(shpZip);
+            zip.file("roads-at-risk-cross-sections.csv", csvForLines(records));
+            const combined = await zip.generateAsync({ type:"blob", compression:"DEFLATE" });
+            downloadBlob(combined, "roads-at-risk-cross-sections-csv-shp.zip");
+          }
+        }
+        setExportStatus(`${format === "both" ? "CSV + SHP" : format.toUpperCase()} exported for ${records.length} cross section${records.length === 1 ? "" : "s"}.`);
+      }catch(err){
+        console.error(err);
+        setExportStatus(err?.message || "Export failed. Please try again.");
+      }finally{
+        button.disabled = false;
+      }
     }
 
     async function downloadScreenshot(){
@@ -3488,9 +3643,36 @@
       renderSavedLines();
     }
 
+    function renderSavedLineLayers(){
+      if(!state.savedLineLayers) return;
+      savedLineLayerGroup.clearLayers();
+      state.savedLineLayers.clear();
+      if(!map._loaded) return;
+      for(const saved of state.savedLines){
+        if(saved.id === state.activeSavedLineId) continue;
+        const layer = L.polyline([
+          L.latLng(saved.a.lat, saved.a.lng),
+          L.latLng(saved.b.lat, saved.b.lng)
+        ], {
+          color:"#a78bfa",
+          weight:4,
+          opacity:.86,
+          lineCap:"round",
+          dashArray:"7 5"
+        }).addTo(savedLineLayerGroup);
+        layer.bindTooltip(saved.name || "Saved cross section", { sticky:true, direction:"top" });
+        layer.on("click", event => {
+          if(event.originalEvent) L.DomEvent.stopPropagation(event.originalEvent);
+          useSavedLine(saved.id);
+        });
+        state.savedLineLayers.set(saved.id, layer);
+      }
+    }
+
     function renderSavedLines(){
       const list = $("savedLineList");
       setText("savedLineCount", String(state.savedLines.length));
+      renderSavedLineLayers();
       if(!list) return;
       list.textContent = "";
       if(!state.savedLines.length){
@@ -3512,7 +3694,8 @@
 
         const useButton = document.createElement("button");
         useButton.type = "button";
-        useButton.textContent = "Use";
+        useButton.textContent = line.id === state.activeSavedLineId ? "Active" : "Activate";
+        useButton.disabled = line.id === state.activeSavedLineId;
         useButton.dataset.savedAction = "use";
         row.appendChild(useButton);
 
@@ -3537,8 +3720,9 @@
       const fallback = `Line ${state.savedLines.length + 1}`;
       const name = sanitizeLineName(input?.value) || fallback;
       const [a, b] = pts;
+      const id = `line-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
       state.savedLines.unshift({
-        id:`line-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
+        id,
         name,
         thresholdFt:state.thresholdFt,
         a:{ lat:a.lat, lng:a.lng },
@@ -3546,9 +3730,10 @@
         createdAt:new Date().toISOString()
       });
       state.savedLines = state.savedLines.slice(0, 12);
+      state.activeSavedLineId = id;
       if(input) input.value = "";
       persistSavedLines();
-      setExportStatus(`Saved "${name}".`);
+      setExportStatus(`Saved "${name}". Draw and save another line to keep both on the map.`);
     }
 
     function useSavedLine(id){
@@ -3556,13 +3741,14 @@
       if(!line) return;
       setDrawMode(false);
       setThreshold(toDisplayDatum(line.thresholdFt ?? state.thresholdFt));
-      drawSection(L.latLng(line.a.lat, line.a.lng), L.latLng(line.b.lat, line.b.lng), true);
+      drawSection(L.latLng(line.a.lat, line.a.lng), L.latLng(line.b.lat, line.b.lng), true, line.id);
       setExportStatus(`Loaded "${line.name || "saved line"}".`);
     }
 
     function deleteSavedLine(id){
       const line = state.savedLines.find(item => item.id === id);
       state.savedLines = state.savedLines.filter(item => item.id !== id);
+      if(state.activeSavedLineId === id) state.activeSavedLineId = null;
       persistSavedLines();
       setExportStatus(line ? `Deleted "${line.name || "saved line"}".` : "Saved line deleted.");
     }
@@ -3656,9 +3842,9 @@
       state.boundsMerc = metadata.webMercatorBounds;
       updateFloodStatsPanel();
 
-      boundaryLayer.addData(boundary);
       const leafletBounds = L.latLngBounds(metadata.leafletBounds);
       map.fitBounds(leafletBounds.pad(.1));
+      boundaryLayer.addData(boundary);
       state.hillshadeOverlay = L.imageOverlay(metadata.files.hillshadePng, metadata.leafletBounds, {
         opacity:.38,
         interactive:false
@@ -3684,7 +3870,7 @@
       setDrawMode(false);
       defaultSection();
     });
-    $("exportBtn").addEventListener("click", exportCsv);
+    $("exportBtn").addEventListener("click", exportSections);
     $("screenshotBtn").addEventListener("click", downloadScreenshot);
     $("saveLineBtn").addEventListener("click", saveCurrentLine);
     $("lineNameInput").addEventListener("keydown", event => {
