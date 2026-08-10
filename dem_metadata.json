@@ -12,7 +12,7 @@
   "pixelSizeFeet": 4.99999999998,
   "width": 1546,
   "height": 1721,
-  "nodata": -999999.0,
+  "nodata": -999999,
   "minMeters": -1.038,
   "maxMeters": 8.518,
   "meanMeters": 1.168,

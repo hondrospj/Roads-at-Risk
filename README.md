@@ -1,18 +1,15 @@
-# Roads at Risk
+# Seaside Heights Roads at Risk
 
-Static GitHub Pages app for drawing cross sections through a clipped 5 ft Seaside Heights DEM.
+Static GitHub Pages app for drawing road and cross-section profiles through the Seaside Heights municipal DEM.
 
-Cross sections can be saved as a multi-line map collection. The active line drives the elevation and flood-history charts, while exports can include every saved section as CSV, an ESRI Shapefile ZIP, or a combined CSV + Shapefile ZIP.
+The interface follows the North Wildwood Roads at Risk reference: threshold presets, NAVD88/MLLW conversion, terrain and hillshade views, saved multi-line cross sections, flood-history and future-frequency charts, and CSV/Shapefile exports.
 
-DEM source: USGS 3DEP Bare Earth DEM Dynamic ImageServer, clipped to the Seaside Heights Borough boundary and resampled to 1.524 m / 5 ft pixels.
+Municipal constants:
 
-Flood-dashboard context: Seaside Heights gauge thresholds, dated observed daily peaks, top tide events, high tide count, and trend summary are stored in `flood_stats.json`.
+- Observations: USGS 01408748, Seaside Heights
+- PETSS / NOAA station: est0006
+- NAVD88 thresholds: 2.55 ft minor, 3.55 ft moderate, 4.55 ft major
+- MLLW thresholds: 3 ft minor, 4 ft moderate, 5 ft major
+- MLLW = NAVD88 + 0.45 ft
 
-Main files:
-
-- `index.html` - web app
-- `seaside_heights_dem_5ft_cog.tif` - elevation COG, meters
-- `seaside_heights_hillshade.png` - map hillshade preview
-- `seaside_heights_boundary.geojson` - clip boundary
-- `dem_metadata.json` - data provenance and raster bounds
-- `flood_stats.json` - flood-dashboard thresholds, dated archive peaks, and trend statistics used by dot-click flood charts
+Terrain source: USGS 3DEP Bare Earth DEM Dynamic ImageServer, clipped to the Seaside Heights Borough boundary at 5-foot resolution.
