@@ -1,0 +1,16 @@
+{
+  "schema": "nj-road-risk-gauge-pipeline-v2",
+  "releaseVersion": "20260920-nj-universal-v2",
+  "floodmapperRepo": "Seaside-Heights-Borough-floodmapper",
+  "sourcePrecedence": [
+    "primary-usgs-continuous",
+    "bias-corrected-noaa-historical-fill",
+    "official-usgs-storm-tide-crest-override"
+  ],
+  "primaryUsgsGaugeId": "01408748",
+  "noaaStationId": "8534720",
+  "noaaRegion": "atlantic-city",
+  "noaaBiasCorrectionFt": -1.4265,
+  "crestUsgsStationId": "01408750",
+  "calibrationPairKey": "01408748:atlantic-city"
+}
